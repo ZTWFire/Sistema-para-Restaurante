@@ -1,0 +1,1114 @@
+<title>Totem Brasa Burger</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: aparelho (totem vertical ou tablet) à esquerda, painel de demonstração à direita.
+   A tela do totem é um mundo visual fixo (marca da loja); a página em volta segue o tema do visitante. */
+:root{
+  --pg-bg:#E9E6E2; --pg-ink:#1D1916; --pg-ink-2:#625B55; --pg-card:#FFFFFF; --pg-line:#D8D2CC; --pg-accent:#D9201A; --pg-soft:#F3F0EC;
+  --k-red:#E2231A; --k-red-dk:#B9170F; --k-char:#140F0D; --k-ink:#1B1513; --k-ink-2:#6E6560; --k-bg:#FFFFFF; --k-soft:#F6F3F0; --k-line:#ECE6E1; --k-yellow:#FFC531; --k-green:#1E9A55;
+  --dev:#141414; --dev-base:#F4F4F2; --dev-base-2:#E3E3E0;
+  --u:1cqmin;
+  --f-display:'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
+  --f-body:'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --f-mono:'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --pg-bg:#121010; --pg-ink:#F2EEEA; --pg-ink-2:#A69E97; --pg-card:#1D1A18; --pg-line:#35302C; --pg-accent:#FF5247; --pg-soft:#262220;
+  --dev-base:#E6E6E3; --dev-base-2:#CFCFCB;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --pg-bg:#121010; --pg-ink:#F2EEEA; --pg-ink-2:#A69E97; --pg-card:#1D1A18; --pg-line:#35302C; --pg-accent:#FF5247; --pg-soft:#262220;
+  --dev-base:#E6E6E3; --dev-base-2:#CFCFCB;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--pg-bg); color:var(--pg-ink); font-family:var(--f-body); font-size:14px; line-height:1.45; -webkit-font-smoothing:antialiased}
+button{font:inherit; color:inherit; cursor:pointer; -webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid var(--k-yellow); outline-offset:2px}
+
+/* Página */
+.page{display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:32px; max-width:1240px; margin:0 auto; padding-block:28px 48px; padding-left:max(16px, env(safe-area-inset-left,0px)); padding-right:max(16px, env(safe-area-inset-right,0px)); align-items:start}
+.stage{display:flex; justify-content:center; min-width:0}
+
+/* Aparelho */
+.device{display:flex; flex-direction:column; align-items:center; position:relative}
+.bezel{background:var(--dev); border-radius:30px; padding:30px 16px 16px; position:relative; box-shadow:0 30px 60px -30px rgba(0,0,0,.55), inset 0 0 0 2px #2a2a2a}
+.cams{position:absolute; top:10px; left:50%; transform:translateX(-50%); display:flex; gap:9px}
+.cams i{width:9px; height:9px; border-radius:50%; background:#262a30; box-shadow:inset 0 0 0 2px #1a1d22}
+.cams i:nth-child(2){background:#1d2a3a}
+.screen{position:relative; overflow:hidden; border-radius:8px; background:var(--k-char); container-type:size; width:min(470px, calc(78vh * 9 / 16), calc(100vw - 64px)); aspect-ratio:9/16; user-select:none; -webkit-user-select:none}
+.base{width:84%; height:150px; background:linear-gradient(180deg, var(--dev-base), var(--dev-base-2)); border-radius:0 0 18px 18px; position:relative; box-shadow:0 22px 40px -24px rgba(0,0,0,.45); margin-top:-2px}
+.base::after{content:""; position:absolute; left:-8%; right:-8%; bottom:-14px; height:14px; background:var(--dev-base-2); border-radius:0 0 12px 12px; box-shadow:0 10px 20px -12px rgba(0,0,0,.4)}
+.slot{position:absolute; left:10%; top:28px; width:46%; height:9px; border-radius:6px; background:#2b2b2b; box-shadow:inset 0 2px 3px rgba(0,0,0,.6)}
+.reader{position:absolute; right:9%; top:22px; width:26%; height:96px; border-radius:10px; background:#232323; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:#9b9b9b; font-size:10px; font-weight:700; letter-spacing:.06em; transition:box-shadow .3s}
+.reader svg{width:26px; height:26px; stroke:currentColor; fill:none; stroke-width:1.8}
+.reader.glow{color:#7CF0A8; box-shadow:0 0 0 3px #1E9A55, 0 0 28px 4px rgba(30,154,85,.55)}
+.brandplate{position:absolute; left:10%; bottom:26px; font:700 10px/1 var(--f-body); letter-spacing:.3em; color:#b3b3ae}
+.receipt{position:absolute; left:calc(10% + 6px); top:32px; width:calc(46% - 12px); max-height:0; overflow:hidden; background:#FFFEFA; color:#222; font-family:var(--f-mono); font-size:9.5px; line-height:1.35; box-shadow:0 8px 14px -6px rgba(0,0,0,.35); transition:max-height 2.4s steps(24,end); z-index:3; cursor:pointer; border-radius:0 0 3px 3px}
+.receipt.out{max-height:340px}
+.receipt .in{padding:10px 9px 14px}
+.receipt .c{text-align:center}
+.receipt .big{font-size:22px; font-weight:600; text-align:center; margin:4px 0}
+.receipt hr{border:0; border-top:1px dashed #999; margin:6px 0}
+.receipt .r{display:flex; justify-content:space-between; gap:6px}
+
+.device[data-orient="landscape"] .bezel{padding:16px 30px; border-radius:26px}
+.device[data-orient="landscape"] .cams{top:50%; left:11px; transform:translateY(-50%); flex-direction:column}
+.device[data-orient="landscape"] .screen{aspect-ratio:16/10; width:min(820px, calc(100vw - 420px), calc(72vh * 16 / 10))}
+.device[data-orient="landscape"] .base{display:none}
+.device[data-orient="landscape"] .screen{--u:.8cqmin}
+.device[data-orient="landscape"] .stand{display:block}
+.stand{display:none; width:120px; height:70px; background:linear-gradient(180deg,#bdbdba,#9d9d99); clip-path:polygon(35% 0,65% 0,78% 100%,22% 100%); margin-top:-2px}
+.stand + .foot{display:none}
+.device[data-orient="landscape"] .foot{display:block; width:260px; height:12px; border-radius:8px; background:#a7a7a3}
+
+/* Painel de demonstração */
+.demo{display:flex; flex-direction:column; gap:16px; position:sticky; top:calc(16px + env(safe-area-inset-top,0px))}
+.demo h1{font-family:var(--f-display); font-weight:900; font-size:30px; letter-spacing:.01em; line-height:1; margin:0; text-transform:uppercase}
+.demo .sub{color:var(--pg-ink-2); margin:6px 0 0; max-width:40ch}
+.box{background:var(--pg-card); border:1px solid var(--pg-line); border-radius:16px; padding:16px}
+.box h2{font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--pg-ink-2); margin:0 0 12px; font-weight:700}
+.seg{display:grid; grid-template-columns:1fr 1fr; gap:4px; background:var(--pg-soft); padding:4px; border-radius:12px}
+.seg button{border:0; background:transparent; border-radius:9px; padding:9px 8px; font-weight:700; font-size:13px; color:var(--pg-ink-2)}
+.seg button[aria-pressed="true"]{background:var(--pg-card); color:var(--pg-ink); box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.sw{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0; cursor:pointer; font-weight:600}
+.sw + .sw{border-top:1px solid var(--pg-line)}
+.sw input{appearance:none; width:40px; height:24px; border-radius:99px; background:var(--pg-line); position:relative; flex:none; margin:0; cursor:pointer; transition:background .15s}
+.sw input::after{content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; transition:transform .15s; box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.sw input:checked{background:var(--pg-accent)}
+.sw input:checked::after{transform:translateX(16px)}
+.sw small{display:block; font-weight:500; color:var(--pg-ink-2); font-size:12px}
+.pbtn{width:100%; border:1px solid var(--pg-line); background:var(--pg-soft); border-radius:11px; padding:10px; font-weight:700; margin-top:8px}
+.pbtn:hover{border-color:var(--pg-ink-2)}
+.board{display:grid; grid-template-columns:1fr 1fr; gap:10px; background:#120E0C; border-radius:12px; padding:12px; color:#fff}
+.board h3{margin:0 0 6px; font:800 12px/1 var(--f-body); letter-spacing:.08em; text-transform:uppercase; color:#B8AEA7}
+.board h3.ready{color:#7CF0A8}
+.board ul{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:4px}
+.board li{font:900 26px/1 var(--f-display); letter-spacing:.02em; font-variant-numeric:tabular-nums}
+.board .ready + ul li{color:#7CF0A8}
+.board li.fresh{animation:blink 1s ease 3}
+.board li span{font:600 11px/1 var(--f-body); color:#B8AEA7; margin-left:6px; letter-spacing:0}
+@keyframes blink{50%{opacity:.25}}
+.stats{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.stats div{background:var(--pg-soft); border-radius:12px; padding:10px 12px}
+.stats span{font-size:12px; color:var(--pg-ink-2); font-weight:600}
+.stats b{display:block; font:900 24px/1.1 var(--f-display); font-variant-numeric:tabular-nums}
+.hint{font-size:12.5px; color:var(--pg-ink-2); margin:0}
+
+@media (max-width: 1000px){
+  .page{grid-template-columns:minmax(0,1fr)}
+  .demo{position:static}
+  .device[data-orient="landscape"] .screen{width:min(820px, calc(100vw - 92px))}
+}
+@media (max-width: 560px){
+  .bezel{padding:0; background:transparent; box-shadow:none; border-radius:0}
+  .cams, .base, .stand, .foot{display:none !important}
+  .screen{width:calc(100vw - 32px); border-radius:18px}
+  .device[data-orient="landscape"] .bezel{padding:0}
+  .device[data-orient="landscape"] .screen{width:calc(100vw - 32px)}
+}
+
+/* ---------------- Tela do totem ---------------- */
+.view{position:absolute; inset:0; font-size:calc(var(--u)*3.4); color:var(--k-ink); animation:vin .28s ease}
+@keyframes vin{from{opacity:0; transform:translateY(calc(var(--u)*1.5))}}
+.screen.a11y .view, .screen.a11y .layer{top:34%}
+.a11y-band{position:absolute; left:0; right:0; top:0; height:34%; background:var(--k-char); color:#fff; display:none; flex-direction:column; align-items:center; justify-content:center; gap:calc(var(--u)*2); text-align:center; padding:calc(var(--u)*4); font-size:calc(var(--u)*3.4); z-index:1}
+.a11y-band b{font:800 calc(var(--u)*5)/1 var(--f-display); text-transform:uppercase; letter-spacing:.03em}
+.screen.a11y .a11y-band{display:flex}
+@container (orientation: landscape){ .screen.a11y .view, .screen.a11y .layer{top:0} .screen.a11y .a11y-band{display:none} }
+
+.k-btn{display:inline-flex; align-items:center; justify-content:center; gap:calc(var(--u)*2); min-height:calc(var(--u)*13); padding:0 calc(var(--u)*6); border-radius:calc(var(--u)*3.2); border:0; font-weight:800; font-size:calc(var(--u)*3.8); background:var(--k-soft); color:var(--k-ink); transition:transform .08s, filter .15s}
+.k-btn:active{transform:scale(.97)}
+.k-btn.red{background:var(--k-red); color:#fff}
+.k-btn.red:hover{filter:brightness(1.05)}
+.k-btn.dark{background:var(--k-char); color:#fff}
+.k-btn.line{background:transparent; box-shadow:inset 0 0 0 2px var(--k-line)}
+.k-btn[disabled]{opacity:.45; pointer-events:none}
+.k-btn svg, .ico{width:1.2em; height:1.2em; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; flex:none}
+.k-title{font:900 calc(var(--u)*8.2)/.95 var(--f-display); text-transform:uppercase; letter-spacing:.005em; margin:0; text-wrap:balance}
+.k-sub{color:var(--k-ink-2); font-size:calc(var(--u)*3.6); margin:calc(var(--u)*2) 0 0}
+.price{font-weight:800; font-variant-numeric:tabular-nums}
+
+/* Descanso */
+.v-attract{background:radial-gradient(120% 70% at 50% 38%, #3A1A10 0%, #1A110D 46%, #0E0A09 100%); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:space-between; padding:calc(var(--u)*8) calc(var(--u)*6) calc(var(--u)*5); text-align:center; cursor:pointer}
+.v-attract .eyebrow{font:800 calc(var(--u)*2.5)/1 var(--f-body); letter-spacing:.2em; white-space:nowrap; text-transform:uppercase; color:#D8C7BA}
+.v-attract .eyebrow b{color:var(--k-yellow)}
+.v-attract .logo{display:flex; flex-direction:column; align-items:center; gap:calc(var(--u)*1)}
+.v-attract .logo svg{width:calc(var(--u)*18); height:auto}
+.v-attract .word{font:900 calc(var(--u)*22)/.8 var(--f-display); letter-spacing:.02em; text-transform:uppercase}
+.v-attract .word-sub{font:800 calc(var(--u)*3.6)/1 var(--f-display); letter-spacing:.5em; text-transform:uppercase; color:var(--k-yellow); margin-left:.5em}
+.hero{width:86%; max-width:100%; position:relative}
+.hero .float{animation:bob 4s ease-in-out infinite}
+.hero svg{width:100%; height:auto; display:block; filter:drop-shadow(0 calc(var(--u)*4) calc(var(--u)*5) rgba(0,0,0,.5))}
+.hero .tag{position:absolute; right:2%; top:4%; width:calc(var(--u)*24); aspect-ratio:1; border-radius:50%; background:var(--k-yellow); color:var(--k-char); display:flex; flex-direction:column; align-items:center; justify-content:center; transform:rotate(10deg); font-weight:800; font-size:calc(var(--u)*2.8); line-height:1.1; box-shadow:0 calc(var(--u)*1) calc(var(--u)*3) rgba(0,0,0,.35)}
+.hero .tag b{font:900 calc(var(--u)*7.4)/1 var(--f-display)}
+@keyframes bob{50%{transform:translateY(calc(var(--u)*-2)) rotate(-1.5deg)}}
+.torn{width:calc(100% + var(--u)*12); background:#FFFFFF; color:var(--k-char); padding:calc(var(--u)*5) calc(var(--u)*6); clip-path:polygon(0 12%,4% 0,9% 10%,15% 2%,22% 11%,29% 1%,36% 9%,43% 0,51% 10%,58% 2%,65% 11%,72% 1%,79% 9%,86% 0,93% 10%,100% 3%,100% 88%,95% 100%,89% 90%,82% 99%,75% 89%,68% 100%,61% 91%,53% 99%,46% 89%,39% 100%,31% 90%,24% 99%,17% 90%,10% 100%,4% 90%,0 98%); font:900 calc(var(--u)*5.6)/1 var(--f-display); text-transform:uppercase; letter-spacing:.03em; display:flex; align-items:center; justify-content:center; gap:calc(var(--u)*2.5)}
+.torn svg{width:calc(var(--u)*7); height:calc(var(--u)*7); stroke:var(--k-red); stroke-width:3; fill:none; animation:nudge 1.2s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(calc(var(--u)*1.5))}}
+.attract-foot{display:flex; justify-content:space-between; align-items:center; width:100%; font-size:calc(var(--u)*2.6); color:#9C8F86}
+.round{width:calc(var(--u)*11); height:calc(var(--u)*11); border-radius:50%; border:2px solid rgba(255,255,255,.25); background:rgba(255,255,255,.06); color:#fff; display:grid; place-items:center}
+.round svg{width:52%; height:52%; fill:none; stroke:currentColor; stroke-width:2}
+
+/* Onde comer */
+.v-dine{background:var(--k-bg); display:flex; flex-direction:column; padding:calc(var(--u)*7) calc(var(--u)*6) calc(var(--u)*6); gap:calc(var(--u)*6)}
+.mini-brand{display:flex; align-items:center; gap:calc(var(--u)*2); font:900 calc(var(--u)*5)/1 var(--f-display); text-transform:uppercase; letter-spacing:.02em}
+.mini-brand svg{width:calc(var(--u)*7); height:auto}
+.mini-brand small{font:800 calc(var(--u)*2.2)/1 var(--f-display); letter-spacing:.4em; color:var(--k-red); display:block; margin-top:2px}
+.dine-opts{display:grid; grid-template-columns:1fr 1fr; gap:calc(var(--u)*4); flex:1; align-content:center}
+.dine-opt{border:0; border-radius:calc(var(--u)*5); background:var(--k-soft); padding:calc(var(--u)*6) calc(var(--u)*3); display:flex; flex-direction:column; align-items:center; gap:calc(var(--u)*3); font:900 calc(var(--u)*6.4)/1 var(--f-display); text-transform:uppercase; transition:transform .1s, background .15s}
+.dine-opt:active{transform:scale(.97)}
+.dine-opt:hover{background:#FDECEA}
+.dine-opt svg{width:72%; height:auto}
+.dine-opt span{font:600 calc(var(--u)*3)/1.3 var(--f-body); text-transform:none; color:var(--k-ink-2)}
+.back-row{display:flex; justify-content:space-between; gap:calc(var(--u)*3)}
+
+/* Cardápio */
+.v-menu{background:var(--k-bg); display:grid; grid-template-rows:auto auto minmax(0,1fr) auto; grid-template-columns:minmax(0,1fr)}
+.m-head{display:flex; align-items:center; justify-content:space-between; gap:calc(var(--u)*3); padding:calc(var(--u)*5) calc(var(--u)*5) calc(var(--u)*3)}
+.m-head .hello{min-width:0}
+.m-head .hello b{display:block; font:900 calc(var(--u)*6.6)/1 var(--f-display); text-transform:uppercase}
+.m-head .hello span{font-size:calc(var(--u)*3.2); color:var(--k-ink-2)}
+.m-head .tools{display:flex; gap:calc(var(--u)*2); align-items:center}
+.chip-btn{border:0; background:var(--k-soft); border-radius:99px; padding:calc(var(--u)*2.2) calc(var(--u)*3.4); font-weight:700; font-size:calc(var(--u)*2.9); display:inline-flex; align-items:center; gap:calc(var(--u)*1.4); white-space:nowrap; min-height:calc(var(--u)*10)}
+.chip-btn svg{width:1.25em; height:1.25em; fill:none; stroke:currentColor; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.cats{display:flex; gap:calc(var(--u)*2.4); overflow-x:auto; padding:calc(var(--u)*1) calc(var(--u)*5) calc(var(--u)*3); scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.cat{flex:none; width:calc(var(--u)*17.5); border:0; border-radius:calc(var(--u)*3.4); background:var(--k-soft); padding:calc(var(--u)*2) calc(var(--u)*1) calc(var(--u)*2.2); display:flex; flex-direction:column; align-items:center; gap:calc(var(--u)*1); font-weight:800; font-size:calc(var(--u)*2.6); line-height:1.1; transition:background .15s, color .15s}
+.cat svg{width:calc(var(--u)*11); height:calc(var(--u)*9)}
+.cat[aria-pressed="true"]{background:var(--k-red); color:#fff}
+.list{overflow-y:auto; padding:0 calc(var(--u)*5) calc(var(--u)*5); scroll-behavior:smooth; overscroll-behavior:contain}
+.sec-title{font:900 calc(var(--u)*6)/1 var(--f-display); text-transform:uppercase; margin:calc(var(--u)*3) 0 calc(var(--u)*3); display:flex; align-items:baseline; gap:calc(var(--u)*2)}
+.sec-title small{font:600 calc(var(--u)*2.9)/1 var(--f-body); text-transform:none; color:var(--k-ink-2)}
+.promo{border:0; width:100%; text-align:left; border-radius:calc(var(--u)*4.5); background:var(--k-red); color:#fff; display:grid; grid-template-columns:1.1fr 1fr; align-items:center; overflow:hidden; padding:calc(var(--u)*4) calc(var(--u)*2) calc(var(--u)*4) calc(var(--u)*5); position:relative}
+.promo::before{content:""; position:absolute; right:-18%; top:-30%; width:70%; aspect-ratio:1; border-radius:50%; background:#F04A2C; opacity:.65}
+.promo .t{position:relative; display:flex; flex-direction:column; gap:calc(var(--u)*1.6)}
+.promo .t small{font:800 calc(var(--u)*2.6)/1 var(--f-body); letter-spacing:.2em; text-transform:uppercase; color:var(--k-yellow)}
+.promo .t b{font:900 calc(var(--u)*8)/.9 var(--f-display); text-transform:uppercase}
+.promo .t span{font-size:calc(var(--u)*3)}
+.promo .t .p{font:900 calc(var(--u)*7)/1 var(--f-display); color:var(--k-yellow)}
+.promo svg{position:relative; width:100%; height:auto}
+.grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:calc(var(--u)*3)}
+.card{border:0; background:var(--k-soft); border-radius:calc(var(--u)*4); padding:calc(var(--u)*2.4) calc(var(--u)*2.4) calc(var(--u)*3); display:flex; flex-direction:column; align-items:center; text-align:center; gap:calc(var(--u)*1); position:relative; transition:transform .1s}
+.card:active{transform:scale(.97)}
+.card .art{width:100%; aspect-ratio:1.15; display:grid; place-items:center}
+.card .art svg{width:100%; height:100%}
+.card .nm{font-weight:800; font-size:calc(var(--u)*3); line-height:1.15; min-height:2.3em; display:flex; align-items:center}
+.card .price{color:var(--k-red); font-size:calc(var(--u)*3.4)}
+.card .badge{position:absolute; top:calc(var(--u)*2); left:calc(var(--u)*2); background:var(--k-yellow); color:var(--k-char); font-weight:800; font-size:calc(var(--u)*2.2); padding:calc(var(--u)*.7) calc(var(--u)*1.8); border-radius:99px; text-transform:uppercase; letter-spacing:.04em}
+.card .badge.new{background:var(--k-char); color:#fff}
+.card .plus{position:absolute; right:calc(var(--u)*2); top:calc(var(--u)*2); width:calc(var(--u)*7.6); height:calc(var(--u)*7.6); border-radius:50%; background:#fff; color:var(--k-red); display:grid; place-items:center; box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.card .plus svg{width:55%; height:55%; fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:round}
+.card.off{opacity:.45; pointer-events:none}
+.card.off .price{color:var(--k-ink-2)}
+
+.cartbar{display:flex; align-items:center; gap:calc(var(--u)*3); background:var(--k-red); color:#fff; padding:calc(var(--u)*3.4) calc(var(--u)*5); padding-bottom:calc(var(--u)*4)}
+.cartbar.empty{background:var(--k-char)}
+.cartbar .bag{position:relative; width:calc(var(--u)*10); height:calc(var(--u)*10); border-radius:calc(var(--u)*3); background:rgba(255,255,255,.16); display:grid; place-items:center; flex:none}
+.cartbar .bag svg{width:56%; height:56%; fill:none; stroke:#fff; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round}
+.cartbar .bag i{position:absolute; top:calc(var(--u)*-1.4); right:calc(var(--u)*-1.4); min-width:calc(var(--u)*5.4); height:calc(var(--u)*5.4); border-radius:99px; background:var(--k-yellow); color:var(--k-char); font:800 calc(var(--u)*2.8)/calc(var(--u)*5.4) var(--f-body); text-align:center; font-style:normal; padding:0 calc(var(--u)*1)}
+.cartbar .sum{flex:1; min-width:0; line-height:1.15}
+.cartbar .sum span{display:block; font-size:calc(var(--u)*2.9); opacity:.85}
+.cartbar .sum b{font:900 calc(var(--u)*6.8)/1 var(--f-display); font-variant-numeric:tabular-nums}
+.cartbar .k-btn{background:#fff; color:var(--k-red); padding:0 calc(var(--u)*4.4); min-height:calc(var(--u)*12)}
+.cartbar.empty .k-btn{background:rgba(255,255,255,.12); color:rgba(255,255,255,.6)}
+.cartbar.bump .bag{animation:bump .45s ease}
+@keyframes bump{40%{transform:scale(1.22) rotate(-6deg)}}
+
+/* Camada sobre a tela */
+.layer{position:absolute; inset:0; z-index:5}
+.scrim{position:absolute; inset:0; background:rgba(20,15,13,.55); animation:fade .2s ease}
+@keyframes fade{from{opacity:0}}
+.sheet{position:absolute; left:0; right:0; bottom:0; height:91%; background:var(--k-bg); border-radius:calc(var(--u)*6) calc(var(--u)*6) 0 0; display:grid; grid-template-rows:auto minmax(0,1fr) auto; overflow:hidden; animation:up .3s cubic-bezier(.2,.85,.25,1); font-size:calc(var(--u)*3.4); color:var(--k-ink)}
+@keyframes up{from{transform:translateY(100%)}}
+@keyframes upx{from{transform:translate(-50%,100%)}}
+.sheet-art{background:radial-gradient(70% 90% at 50% 70%, #FFE3D6 0%, var(--k-soft) 70%); height:calc(var(--u)*44); display:grid; place-items:center; position:relative}
+.sheet-art svg{height:88%; width:auto; max-width:90%}
+.x{position:absolute; top:calc(var(--u)*3.4); right:calc(var(--u)*3.4); width:calc(var(--u)*11); height:calc(var(--u)*11); border-radius:50%; border:0; background:#fff; display:grid; place-items:center; box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.x svg{width:45%; height:45%; fill:none; stroke:var(--k-ink); stroke-width:2.6; stroke-linecap:round}
+.sheet-body{overflow-y:auto; padding:calc(var(--u)*4) calc(var(--u)*5) calc(var(--u)*5); overscroll-behavior:contain}
+.p-name{font:900 calc(var(--u)*8)/.95 var(--f-display); text-transform:uppercase; margin:0}
+.p-desc{color:var(--k-ink-2); margin:calc(var(--u)*1.6) 0 0; font-size:calc(var(--u)*3.3)}
+.p-price{color:var(--k-red); font:900 calc(var(--u)*6)/1 var(--f-display); margin-top:calc(var(--u)*2)}
+.grp{margin-top:calc(var(--u)*5)}
+.grp-h{display:flex; justify-content:space-between; align-items:center; gap:calc(var(--u)*2); background:var(--k-soft); border-radius:calc(var(--u)*2.6); padding:calc(var(--u)*2.6) calc(var(--u)*3.4); margin-bottom:calc(var(--u)*1.5)}
+.grp-h b{font-weight:800; font-size:calc(var(--u)*3.6)}
+.grp-h small{display:block; color:var(--k-ink-2); font-size:calc(var(--u)*2.8)}
+.req{font-size:calc(var(--u)*2.4); font-weight:800; letter-spacing:.05em; text-transform:uppercase; background:var(--k-char); color:#fff; border-radius:99px; padding:calc(var(--u)*.8) calc(var(--u)*2)}
+.req.ok{background:var(--k-green)}
+.opt{width:100%; border:0; background:transparent; display:flex; align-items:center; gap:calc(var(--u)*3); padding:calc(var(--u)*2.4) calc(var(--u)*2); min-height:calc(var(--u)*12); border-bottom:1px solid var(--k-line); text-align:left; font-size:calc(var(--u)*3.4); font-weight:600}
+.opt .l{flex:1}
+.opt .l small{display:block; font-weight:500; color:var(--k-ink-2); font-size:calc(var(--u)*2.8)}
+.opt .pr{color:var(--k-ink-2); font-weight:700; font-variant-numeric:tabular-nums}
+.radio{width:calc(var(--u)*6.4); height:calc(var(--u)*6.4); border-radius:50%; box-shadow:inset 0 0 0 2px #CFC6BF; flex:none; display:grid; place-items:center}
+.opt[aria-checked="true"] .radio{box-shadow:inset 0 0 0 calc(var(--u)*1.9) var(--k-red)}
+.stepper{display:flex; align-items:center; gap:calc(var(--u)*2); flex:none}
+.stepper button{width:calc(var(--u)*9.5); height:calc(var(--u)*9.5); border-radius:50%; border:0; background:var(--k-soft); display:grid; place-items:center; color:var(--k-red)}
+.stepper button svg{width:46%; height:46%; fill:none; stroke:currentColor; stroke-width:3; stroke-linecap:round}
+.stepper button[disabled]{color:#C9C0B9; pointer-events:none}
+.stepper b{min-width:calc(var(--u)*5); text-align:center; font-size:calc(var(--u)*4.2); font-variant-numeric:tabular-nums}
+.chips{display:flex; flex-wrap:wrap; gap:calc(var(--u)*2); padding:calc(var(--u)*1) 0}
+.rm{border:0; border-radius:99px; background:var(--k-soft); padding:0 calc(var(--u)*4); min-height:calc(var(--u)*10.5); font-weight:700; font-size:calc(var(--u)*3.1); display:inline-flex; align-items:center; gap:calc(var(--u)*1.4)}
+.rm svg{width:1.1em; height:1.1em; fill:none; stroke:currentColor; stroke-width:2.6; stroke-linecap:round}
+.rm[aria-pressed="true"]{background:var(--k-char); color:#fff}
+.sheet-foot{display:flex; gap:calc(var(--u)*3); align-items:center; padding:calc(var(--u)*3.4) calc(var(--u)*5) calc(var(--u)*4.4); border-top:1px solid var(--k-line); background:#fff}
+.sheet-foot .k-btn{flex:1}
+@container (orientation: landscape){
+  .sheet{left:50%; right:auto; width:min(calc(var(--u)*130), 92%); transform:translateX(-50%); height:94%; animation:upx .3s cubic-bezier(.2,.85,.25,1); grid-template-columns:42% minmax(0,1fr); grid-template-rows:minmax(0,1fr) auto}
+  .sheet-art{height:auto; grid-row:1/3}
+  .sheet-foot{grid-column:2}
+}
+
+/* Pop-up de sugestão e aviso */
+.pop{position:absolute; left:calc(var(--u)*5); right:calc(var(--u)*5); top:50%; transform:translateY(-50%); background:#fff; border-radius:calc(var(--u)*6); padding:calc(var(--u)*6) calc(var(--u)*5) calc(var(--u)*5); animation:popin .3s cubic-bezier(.2,.85,.25,1); text-align:center; font-size:calc(var(--u)*3.4); color:var(--k-ink); max-width:calc(var(--u)*120); margin:0 auto}
+@keyframes popin{from{opacity:0; transform:translateY(-46%) scale(.96)}}
+.pop .k-title{font-size:calc(var(--u)*7.4)}
+.ups{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:calc(var(--u)*2.6); margin:calc(var(--u)*5) 0}
+.ups .card{padding-bottom:calc(var(--u)*2.6)}
+.ups .add{margin-top:calc(var(--u)*1); border-radius:99px; background:var(--k-red); color:#fff; font-weight:800; font-size:calc(var(--u)*2.8); padding:calc(var(--u)*1.6) calc(var(--u)*3)}
+.ups .card[aria-pressed="true"] .add{background:var(--k-green)}
+.pop .actions{display:flex; flex-direction:column; gap:calc(var(--u)*2.4)}
+.ring{width:calc(var(--u)*30); height:calc(var(--u)*30); margin:calc(var(--u)*4) auto}
+.ring circle{fill:none; stroke-width:8}
+.ring .bg{stroke:var(--k-line)}
+.ring .fg{stroke:var(--k-red); stroke-linecap:round; transform:rotate(-90deg); transform-origin:50% 50%; transition:stroke-dashoffset 1s linear}
+.ring text{font:900 34px/1 var(--f-display); fill:var(--k-ink)}
+
+/* Telas de etapa */
+.v-step{background:var(--k-bg); display:grid; grid-template-rows:auto minmax(0,1fr) auto}
+.step-head{display:flex; align-items:center; gap:calc(var(--u)*3); padding:calc(var(--u)*5) calc(var(--u)*5) calc(var(--u)*2)}
+.step-head .back{width:calc(var(--u)*11); height:calc(var(--u)*11); border-radius:50%; border:0; background:var(--k-soft); display:grid; place-items:center; flex:none}
+.step-head .back svg{width:46%; height:46%; fill:none; stroke:var(--k-ink); stroke-width:2.8; stroke-linecap:round; stroke-linejoin:round}
+.steps{display:flex; gap:calc(var(--u)*1.4); margin-left:auto}
+.steps i{width:calc(var(--u)*6); height:calc(var(--u)*1.4); border-radius:99px; background:var(--k-line)}
+.steps i.on{background:var(--k-red)}
+.step-body{overflow-y:auto; padding:calc(var(--u)*2) calc(var(--u)*5) calc(var(--u)*4); overscroll-behavior:contain}
+.step-foot{padding:calc(var(--u)*3.4) calc(var(--u)*5) calc(var(--u)*5); border-top:1px solid var(--k-line); display:flex; flex-direction:column; gap:calc(var(--u)*2.4)}
+.step-foot .row{display:flex; gap:calc(var(--u)*3)}
+.step-foot .row .k-btn{flex:1}
+.total-row{display:flex; justify-content:space-between; align-items:baseline}
+.total-row span{color:var(--k-ink-2); font-weight:600}
+.total-row b{font:900 calc(var(--u)*8)/1 var(--f-display); font-variant-numeric:tabular-nums}
+
+.items{display:flex; flex-direction:column; gap:calc(var(--u)*2.6); margin-top:calc(var(--u)*4)}
+.item{display:grid; grid-template-columns:calc(var(--u)*17) minmax(0,1fr); gap:calc(var(--u)*3); background:var(--k-soft); border-radius:calc(var(--u)*4); padding:calc(var(--u)*2.6)}
+.item .art{background:#fff; border-radius:calc(var(--u)*3); aspect-ratio:1; display:grid; place-items:center; padding:calc(var(--u)*1)}
+.item .art svg{width:100%; height:100%}
+.item .t b{font-weight:800; font-size:calc(var(--u)*3.6); display:block; line-height:1.15}
+.item .t p{margin:calc(var(--u)*.8) 0 0; color:var(--k-ink-2); font-size:calc(var(--u)*2.9); line-height:1.3}
+.item .bot{display:flex; justify-content:space-between; align-items:center; margin-top:calc(var(--u)*2); gap:calc(var(--u)*2)}
+.item .bot .price{font-size:calc(var(--u)*4)}
+.item .trash{border:0; background:transparent; color:var(--k-ink-2); font-weight:700; font-size:calc(var(--u)*2.8); display:inline-flex; gap:calc(var(--u)*1); align-items:center; min-height:calc(var(--u)*9)}
+.item .trash svg{width:1.3em; height:1.3em; fill:none; stroke:currentColor; stroke-width:2}
+.lines{margin-top:calc(var(--u)*4); display:flex; flex-direction:column; gap:calc(var(--u)*1.6); color:var(--k-ink-2); font-weight:600}
+.lines div{display:flex; justify-content:space-between}
+
+.namebox{margin-top:calc(var(--u)*6); border-radius:calc(var(--u)*4); background:var(--k-soft); min-height:calc(var(--u)*17); display:flex; align-items:center; justify-content:center; font:900 calc(var(--u)*9)/1 var(--f-display); text-transform:uppercase; letter-spacing:.03em; color:var(--k-ink); padding:0 calc(var(--u)*4); box-shadow:inset 0 0 0 3px var(--k-red)}
+.namebox.ph{color:#BDB3AC; box-shadow:inset 0 0 0 2px var(--k-line)}
+.namebox .caret{width:3px; height:.9em; background:var(--k-red); margin-left:4px; animation:blink 1s steps(1) infinite}
+.kbd{margin-top:calc(var(--u)*5); display:flex; flex-direction:column; gap:calc(var(--u)*1.6)}
+.kbd .r{display:flex; gap:calc(var(--u)*1.4); justify-content:center}
+.kbd button{flex:1; max-width:calc(var(--u)*9); height:calc(var(--u)*11.5); border:0; border-radius:calc(var(--u)*2); background:var(--k-soft); font-weight:800; font-size:calc(var(--u)*3.8); box-shadow:0 2px 0 #E2DAD3}
+.kbd button:active{background:#FBD9D6; transform:translateY(1px); box-shadow:none}
+.kbd .wide{max-width:none; flex:4}
+.kbd .act{max-width:none; flex:1.6; background:#EDE7E2}
+.kbd button svg{width:45%; height:45%; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round}
+
+.pays{display:grid; grid-template-columns:1fr 1fr; gap:calc(var(--u)*3); margin-top:calc(var(--u)*5)}
+.pay{border:0; border-radius:calc(var(--u)*4.4); background:var(--k-soft); padding:calc(var(--u)*5) calc(var(--u)*3); display:flex; flex-direction:column; align-items:center; gap:calc(var(--u)*2.4); font-weight:800; font-size:calc(var(--u)*3.8); min-height:calc(var(--u)*34); justify-content:center; transition:transform .1s, background .15s}
+.pay:active{transform:scale(.97)}
+.pay:hover{background:#FDECEA}
+.pay svg{width:calc(var(--u)*14); height:calc(var(--u)*14)}
+.pay small{font-weight:600; color:var(--k-ink-2); font-size:calc(var(--u)*2.7)}
+.pay.wide{grid-column:1/-1; flex-direction:row; min-height:calc(var(--u)*20); gap:calc(var(--u)*4)}
+.pay.wide svg{width:calc(var(--u)*11); height:calc(var(--u)*11)}
+.pay.wide div{text-align:left}
+.pay.wide small{display:block}
+.cpf{margin-top:calc(var(--u)*4); width:100%; border:0; background:transparent; display:flex; align-items:center; justify-content:space-between; gap:calc(var(--u)*3); padding:calc(var(--u)*3.4) calc(var(--u)*4); border-radius:calc(var(--u)*3.4); box-shadow:inset 0 0 0 2px var(--k-line); font-weight:700; font-size:calc(var(--u)*3.4); min-height:calc(var(--u)*13)}
+.cpf span{color:var(--k-ink-2); font-weight:600}
+.cpf b{color:var(--k-red)}
+.pad{display:grid; grid-template-columns:repeat(3,1fr); gap:calc(var(--u)*2); margin:calc(var(--u)*4) 0}
+.pad button{height:calc(var(--u)*13); border:0; border-radius:calc(var(--u)*3); background:var(--k-soft); font:800 calc(var(--u)*5)/1 var(--f-body); box-shadow:0 2px 0 #E2DAD3}
+.pad button svg{width:calc(var(--u)*6); height:calc(var(--u)*6); fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round}
+.cpf-show{font:900 calc(var(--u)*8)/1 var(--f-display); letter-spacing:.04em; text-align:center; margin-top:calc(var(--u)*3); font-variant-numeric:tabular-nums}
+
+.v-center{background:var(--k-bg); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:calc(var(--u)*7) calc(var(--u)*6); gap:calc(var(--u)*3)}
+.amount{font:900 calc(var(--u)*11)/1 var(--f-display); font-variant-numeric:tabular-nums}
+.cardanim{width:calc(var(--u)*46); position:relative; margin:calc(var(--u)*3) 0}
+.cardanim svg{width:100%; height:auto; display:block}
+.cardanim .cc{animation:tap 2s ease-in-out infinite; transform-origin:50% 50%}
+@keyframes tap{0%,100%{transform:translateY(0) rotate(-8deg)} 50%{transform:translateY(14%) rotate(-2deg)}}
+.arrow-down{width:calc(var(--u)*12); height:calc(var(--u)*12); color:var(--k-red); animation:down 1.1s ease-in-out infinite}
+.arrow-down svg{width:100%; height:100%; fill:none; stroke:currentColor; stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round}
+@keyframes down{50%{transform:translateY(calc(var(--u)*2.4))}}
+.spinner{width:calc(var(--u)*20); height:calc(var(--u)*20); border-radius:50%; border:calc(var(--u)*1.8) solid var(--k-line); border-top-color:var(--k-red); animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.qr{width:calc(var(--u)*56); max-width:100%; background:#fff; padding:calc(var(--u)*3.4); border-radius:calc(var(--u)*4); box-shadow:inset 0 0 0 2px var(--k-line); position:relative}
+.qr svg{width:100%; height:auto; display:block}
+.qr .pix-logo{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:18%; aspect-ratio:1; background:#fff; border-radius:22%; display:grid; place-items:center; padding:3%}
+.waiting{display:inline-flex; align-items:center; gap:calc(var(--u)*2); font-weight:700; color:var(--k-ink-2)}
+.waiting i{width:calc(var(--u)*2.6); height:calc(var(--u)*2.6); border-radius:50%; background:#32BCAD; animation:pulse 1.2s ease infinite}
+@keyframes pulse{50%{transform:scale(1.6); opacity:.4}}
+.timer{font-variant-numeric:tabular-nums; font-weight:800; color:var(--k-ink)}
+.link-btn{border:0; background:transparent; color:var(--k-ink-2); font-weight:700; text-decoration:underline; text-underline-offset:3px; font-size:calc(var(--u)*3); padding:calc(var(--u)*2)}
+
+.v-done{background:var(--k-char); color:#fff; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:calc(var(--u)*7) calc(var(--u)*6); gap:calc(var(--u)*2)}
+.check{width:calc(var(--u)*22); height:calc(var(--u)*22); border-radius:50%; background:var(--k-green); display:grid; place-items:center; animation:popc .5s cubic-bezier(.3,1.6,.5,1)}
+.check svg{width:55%; height:55%; fill:none; stroke:#fff; stroke-width:3.2; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:30; stroke-dashoffset:30; animation:draw .5s .25s ease forwards}
+@keyframes popc{from{transform:scale(.3); opacity:0}}
+@keyframes draw{to{stroke-dashoffset:0}}
+.v-done .k-title{color:#fff}
+.ticket{margin-top:calc(var(--u)*4); background:#fff; color:var(--k-char); border-radius:calc(var(--u)*5); padding:calc(var(--u)*5) calc(var(--u)*8); width:100%; max-width:calc(var(--u)*80)}
+.ticket small{font:800 calc(var(--u)*2.8)/1 var(--f-body); letter-spacing:.24em; text-transform:uppercase; color:var(--k-ink-2)}
+.ticket .num{font:900 calc(var(--u)*28)/.85 var(--f-display); color:var(--k-red); font-variant-numeric:tabular-nums; margin:calc(var(--u)*2) 0}
+.ticket .who{font:900 calc(var(--u)*6)/1 var(--f-display); text-transform:uppercase}
+.done-info{color:#D6CBC3; max-width:36ch; font-size:calc(var(--u)*3.4)}
+.done-info b{color:#fff}
+.v-done .k-btn{background:#fff; color:var(--k-char); margin-top:calc(var(--u)*3)}
+.v-done .ring .bg{stroke:rgba(255,255,255,.15)}
+.v-done .ring text{fill:#fff}
+
+.k-toast{position:absolute; left:50%; bottom:calc(var(--u)*24); transform:translateX(-50%); background:var(--k-char); color:#fff; padding:calc(var(--u)*2.6) calc(var(--u)*5); border-radius:99px; font-weight:700; font-size:calc(var(--u)*3.2); display:flex; align-items:center; gap:calc(var(--u)*2); white-space:nowrap; z-index:8; animation:toast 2.2s ease forwards; pointer-events:none}
+.k-toast svg{width:1.2em; height:1.2em; fill:none; stroke:#7CF0A8; stroke-width:3; stroke-linecap:round; stroke-linejoin:round}
+@keyframes toast{0%{opacity:0; transform:translate(-50%,20px)} 12%,80%{opacity:1; transform:translate(-50%,0)} 100%{opacity:0}}
+
+/* Paisagem (tablet) */
+@container (orientation: landscape){
+  .view{font-size:calc(var(--u)*3.2)}
+  .v-attract{flex-direction:row; flex-wrap:wrap; align-content:center; justify-content:center; gap:calc(var(--u)*4) calc(var(--u)*8); padding:calc(var(--u)*6)}
+  .v-attract .eyebrow{width:100%; order:-1}
+  .v-attract .hero{width:44%}
+  .v-attract .torn{width:auto; flex-basis:60%; order:3}
+  .v-attract .attract-foot{position:absolute; left:calc(var(--u)*6); right:calc(var(--u)*6); bottom:calc(var(--u)*4); width:auto}
+  .v-menu{grid-template-columns:calc(var(--u)*30) minmax(0,1fr); grid-template-rows:auto minmax(0,1fr) auto}
+  .m-head{grid-column:1/-1}
+  .cats{flex-direction:column; overflow-x:hidden; overflow-y:auto; padding:0 calc(var(--u)*2) calc(var(--u)*4) calc(var(--u)*5)}
+  .cat{width:100%; flex-direction:row; justify-content:flex-start; gap:calc(var(--u)*2); padding:calc(var(--u)*1.6) calc(var(--u)*2.4); font-size:calc(var(--u)*3)}
+  .cat svg{width:calc(var(--u)*9); height:calc(var(--u)*8)}
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .promo{grid-template-columns:1.2fr 1fr; padding-block:calc(var(--u)*3)}
+  .cartbar{grid-column:1/-1}
+  .dine-opts{max-width:calc(var(--u)*130); margin:0 auto; width:100%}
+  .dine-opt svg{width:46%}
+  .step-body, .step-foot{max-width:calc(var(--u)*140); margin:0 auto; width:100%}
+  .pays{grid-template-columns:repeat(4,1fr)}
+  .pay.wide{grid-column:auto; flex-direction:column; min-height:calc(var(--u)*34)}
+  .pay.wide div{text-align:center}
+  .kbd button{height:calc(var(--u)*10)}
+  .items{display:grid; grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important} .receipt{transition:none} }
+</style>
+
+<div class="page">
+  <div class="stage">
+    <div class="device" id="device" data-orient="portrait">
+      <div class="bezel">
+        <div class="cams" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="screen" id="screen" role="application" aria-label="Tela do totem de autoatendimento">
+          <div class="a11y-band" id="a11y-band"><b>Modo acessível</b><span>O conteúdo desceu para facilitar o alcance.</span><button class="k-btn" data-act="a11y">Sair do modo acessível</button></div>
+          <div id="view"></div>
+          <div id="layer"></div>
+          <div id="ktoast"></div>
+        </div>
+      </div>
+      <div class="base" aria-hidden="false">
+        <div class="slot"></div>
+        <div class="receipt" id="receipt" title="Toque para recolher o comprovante" data-act="receipt"></div>
+        <div class="reader" id="reader" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8.5 7.5a6 6 0 0 1 0 9M12 5a9.5 9.5 0 0 1 0 14M5 10a2.5 2.5 0 0 1 0 4"/></svg>APROXIME</div>
+        <div class="brandplate">BRASA · TOTEM</div>
+      </div>
+      <div class="stand" aria-hidden="true"></div>
+      <div class="foot" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <aside class="demo" aria-label="Painel de demonstração">
+    <div>
+      <h1>Totem Brasa</h1>
+      <p class="sub">Protótipo de autoatendimento para hamburgueria. Toque na tela do totem para fazer um pedido completo, do cardápio ao pagamento.</p>
+    </div>
+    <section class="box">
+      <h2>Formato do aparelho</h2>
+      <div class="seg" role="group" aria-label="Formato">
+        <button data-act="orient" data-o="portrait" aria-pressed="true">Totem vertical</button>
+        <button data-act="orient" data-o="landscape" aria-pressed="false">Tablet</button>
+      </div>
+    </section>
+    <section class="box">
+      <h2>Simular situações</h2>
+      <label class="sw" for="sim-decline"><span>Cartão recusado<small>A próxima tentativa com cartão falha</small></span><input type="checkbox" id="sim-decline"></label>
+      <label class="sw" for="sim-a11y"><span>Modo acessível<small>Desce o conteúdo para quem usa cadeira de rodas</small></span><input type="checkbox" id="sim-a11y"></label>
+      <label class="sw" for="sim-off"><span>Acabou o Cheddar Melt<small>Item some do pedido e aparece esgotado</small></span><input type="checkbox" id="sim-off"></label>
+      <button class="pbtn" data-act="idle-now">Mostrar aviso de inatividade</button>
+      <button class="pbtn" data-act="reset">Reiniciar o totem</button>
+    </section>
+    <section class="box">
+      <h2>Painel de senhas (TV da loja)</h2>
+      <div class="board" id="board"></div>
+    </section>
+    <section class="box">
+      <h2>Hoje neste totem</h2>
+      <div class="stats" id="stats"></div>
+      <p class="hint" style="margin-top:10px">Inclui os pedidos que você fizer agora. Ticket médio calculado sobre todos.</p>
+    </section>
+  </aside>
+</div>
+
+<script>
+/* ================= Ilustrações ================= */
+const C = { bun:'#EEA34B', bunDk:'#D4812C', bunHi:'#F8CB86', patty:'#5B2F1C', pattyDk:'#3E1D0F', cheese:'#FFC531', lettuce:'#5BB234', tomato:'#E14B33', bacon:'#B4432C', baconHi:'#EE9C7E', onion:'#F4E4EC', chicken:'#D98F2E', chickenDk:'#B26B1B', veg:'#9A7B36', red:'#E2231A', redDk:'#B9170F', fry:'#FFC43B', fryDk:'#E8A11F' };
+const FLAME = 'M16 2.5c2.8 4.6 8.6 7.8 8.6 14.6a8.6 8.6 0 0 1-17.2 0c0-3.7 1.9-5.9 3.8-7.4.1 2.8 1.4 4.5 3.4 5C13.8 10.5 13.3 6.5 16 2.5z';
+const shadow = (cx=100, cy=154, rx=70) => `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="7" fill="#000" opacity=".13"/>`;
+
+function burgerG(layers){
+  let y = 146, s = shadow(100,152,72);
+  s += `<rect x="34" y="${y-22}" width="132" height="24" rx="12" fill="${C.bunDk}"/><rect x="34" y="${y-22}" width="132" height="13" rx="6.5" fill="${C.bun}"/>`;
+  y -= 20;
+  for (const l of layers){
+    if (l === 'patty' || l === 'veg'){
+      const col = l === 'veg' ? C.veg : C.patty;
+      s += `<rect x="28" y="${y-17}" width="144" height="19" rx="9.5" fill="${col}"/>` + [44,62,82,104,124,146,160].map((x,i) => `<circle cx="${x}" cy="${y-9+(i%2)*4}" r="1.7" fill="${C.pattyDk}" opacity=".65"/>`).join('');
+      y -= 15;
+    } else if (l === 'cheese'){
+      s += `<path d="M30 ${y-5}H170V${y}H160L153 ${y+8}L146 ${y}H124L117 ${y+10}L110 ${y}H66L59 ${y+8}L52 ${y}H30Z" fill="${C.cheese}"/>`;
+      y -= 5;
+    } else if (l === 'lettuce'){
+      let d = `M26 ${y+2}`; for (let i=0;i<9;i++) d += ' q8 -11 16 0';
+      s += `<path d="${d} L174 ${y+2} L174 ${y+6} L26 ${y+6}Z" fill="${C.lettuce}"/>`;
+      y -= 8;
+    } else if (l === 'tomato'){
+      s += `<rect x="38" y="${y-7}" width="124" height="9" rx="4.5" fill="${C.tomato}"/><rect x="48" y="${y-6}" width="40" height="2.4" rx="1.2" fill="#F58A72"/>`;
+      y -= 7;
+    } else if (l === 'bacon'){
+      const d = `M36 ${y-3} q11 -7 22 0 t22 0 t22 0 t22 0 t22 0 t20 0`;
+      s += `<path d="${d}" stroke="${C.bacon}" stroke-width="7.5" fill="none" stroke-linecap="round"/><path d="${d}" stroke="${C.baconHi}" stroke-width="2" fill="none" stroke-linecap="round" opacity=".85"/>`;
+      y -= 7;
+    } else if (l === 'onion'){
+      s += `<rect x="40" y="${y-5}" width="58" height="5" rx="2.5" fill="${C.onion}" stroke="#D7BACB" stroke-width=".8"/><rect x="94" y="${y-6}" width="66" height="5" rx="2.5" fill="${C.onion}" stroke="#D7BACB" stroke-width=".8"/>`;
+      y -= 5;
+    } else if (l === 'crispy'){
+      s += [44,58,72,86,100,114,128,142,156].map((x,i)=>`<path d="M${x} ${y-1} q4 -7 9 -1" stroke="#C9822E" stroke-width="3.2" fill="none" stroke-linecap="round" transform="rotate(${(i%3-1)*14} ${x} ${y})"/>`).join('');
+      y -= 6;
+    } else if (l === 'chicken'){
+      s += `<path d="M26 ${y-10} q0 -11 14 -11 h120 q14 0 14 11 q0 11 -14 11 h-120 q-14 0 -14 -11z" fill="${C.chicken}"/>` + [40,56,72,88,104,120,136,152].map((x,i)=>`<circle cx="${x}" cy="${y-12+(i%3)*4}" r="2.4" fill="${C.chickenDk}" opacity=".6"/>`).join('');
+      y -= 19;
+    } else if (l === 'sauce'){
+      s += `<path d="M34 ${y-2} q10 7 20 0 t20 0 t20 0 t20 0 t20 0 t18 0" stroke="#F3E7C8" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+      y -= 3;
+    }
+  }
+  s += `<path d="M30 ${y+3}C30 ${y-50} 170 ${y-50} 170 ${y+3}Z" fill="${C.bun}"/>`;
+  s += `<path d="M30 ${y+3}C30 ${y-6} 170 ${y-6} 170 ${y+3}Z" fill="${C.bunDk}" opacity=".55"/>`;
+  s += `<path d="M52 ${y-16}C58 ${y-34} 92 ${y-40} 116 ${y-37}" stroke="${C.bunHi}" stroke-width="6" stroke-linecap="round" fill="none" opacity=".75"/>`;
+  s += [[70,-22,-20],[92,-31,10],[116,-32,-12],[138,-24,22],[104,-19,0],[80,-33,30],[130,-36,-30],[60,-11,14],[150,-12,-16],[124,-17,8]].map(([x,dy,a]) => `<ellipse cx="${x}" cy="${y+dy}" rx="3.3" ry="1.8" fill="#FFF3D6" transform="rotate(${a} ${x} ${y+dy})"/>`).join('');
+  return { g:s, top:y-40 };
+}
+function burger(layers){ const b = burgerG(layers); const vy = Math.min(0, b.top - 6); return svg(b.g, `0 ${vy} 200 ${166-vy}`); }
+function friesG(size='M'){
+  const k = {P:.86, M:1, G:1.1}[size] || 1;
+  const sticks = [[62,-8],[72,4],[81,-14],[90,0],[99,-18],[108,-4],[117,-12],[126,2],[134,-6]];
+  let s = shadow(100,154,52);
+  s += `<g transform="translate(100 154) scale(${k}) translate(-100 -154)">`;
+  s += sticks.map(([x,dy],i) => `<g transform="rotate(${(i%3-1)*5} ${x} 110)"><rect x="${x-4.5}" y="${34+dy}" width="10" height="80" rx="2" fill="${C.fry}"/><rect x="${x+3}" y="${34+dy}" width="2.5" height="80" fill="${C.fryDk}"/></g>`).join('');
+  s += `<path d="M56 78L144 78L134 152L66 152Z" fill="${C.red}"/><path d="M56 78Q100 98 144 78L144 86Q100 106 56 86Z" fill="${C.redDk}"/>`;
+  s += `<path d="${FLAME}" fill="#fff" transform="translate(88 110) scale(.75)"/>`;
+  return s + '</g>';
+}
+const fries = size => svg(friesG(size));
+function canG(color, band='#fff'){
+  return shadow(100,154,34) + `<rect x="72" y="48" width="56" height="104" rx="11" fill="${color}"/><rect x="75" y="40" width="50" height="14" rx="6" fill="#C9CED4"/><rect x="83" y="42" width="20" height="5" rx="2.5" fill="#9AA0A8"/><rect x="74" y="144" width="52" height="9" rx="4" fill="#B5BAC1"/><path d="M72 104q14 -10 28 0t28 0v14q-14 -10 -28 0t-28 0z" fill="${band}" opacity=".9"/><rect x="80" y="58" width="6" height="80" rx="3" fill="#fff" opacity=".25"/>`;
+}
+const can = (c,b) => svg(canG(c,b));
+function cupG(liquid, extra=''){
+  return shadow(100,154,34) + `<path d="M68 46L132 46L124 152L76 152Z" fill="#fff" opacity=".7" stroke="#DCD4CE" stroke-width="2"/><path d="M71 64L129 64L124 150L76 150Z" fill="${liquid}"/><rect x="104" y="12" width="7" height="70" rx="3" fill="${C.red}" transform="rotate(14 107 47)"/>${extra}`;
+}
+function shakeG(color){
+  return shadow(100,154,36) + `<rect x="106" y="6" width="8" height="64" rx="4" fill="${C.red}" transform="rotate(16 110 38)"/><path d="M66 66L134 66L124 152L76 152Z" fill="${color}"/><path d="M66 66L134 66L132 80L68 80Z" fill="#fff" opacity=".25"/>` +
+    [[74,62,12],[90,54,15],[110,54,15],[126,62,12],[100,44,13],[84,46,10],[116,46,10]].map(([x,y,r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#FFF8F0"/>`).join('') +
+    `<circle cx="100" cy="30" r="8" fill="${C.red}"/><path d="M100 22q3 -10 10 -12" stroke="#5C7A2B" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+}
+const SVG_NS = 'http://www.w3.org/2000/svg';
+function svg(g, vb='0 0 200 166'){ return `<svg viewBox="${vb}" xmlns="${SVG_NS}" aria-hidden="true">${g}</svg>`; }
+
+const ART = {
+  smash:   () => burger(['patty','cheese','sauce']),
+  smashb:  () => burger(['patty','cheese','bacon','patty','cheese']),
+  duplo:   () => burger(['patty','cheese','onion','patty','cheese']),
+  melt:    () => burger(['patty','cheese','cheese','crispy']),
+  salad:   () => burger(['patty','cheese','tomato','lettuce']),
+  chicken: () => burger(['chicken','lettuce','sauce']),
+  veggie:  () => burger(['veg','tomato','lettuce']),
+  friesP:  () => fries('P'), friesM: () => fries('M'), friesG: () => fries('G'),
+  loaded:  () => svg(shadow(100,154,66) + `<path d="M36 108L164 108L152 150L48 150Z" fill="${C.red}"/>` + [[52,92,-20],[70,86,8],[88,94,-10],[104,84,16],[122,92,-6],[138,88,20],[150,98,-14],[62,100,12],[118,100,-18]].map(([x,y,a])=>`<rect x="${x-24}" y="${y}" width="48" height="10" rx="2" fill="${C.fry}" transform="rotate(${a} ${x} ${y+5})"/>`).join('') + `<path d="M44 96q14 -12 26 -2t26 -4t26 2t30 -4q6 10 -6 14q-20 6 -50 4t-52 -2q-6 -2 0 -8z" fill="#FFAE1A"/>` + [[60,92],[84,88],[106,94],[128,88],[146,94],[94,100],[118,100]].map(([x,y])=>`<rect x="${x}" y="${y}" width="7" height="5" rx="1.5" fill="${C.bacon}"/>`).join('') + [[72,96],[112,90],[136,98]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="2" fill="#4E9A2A"/>`).join('') + `<path d="${FLAME}" fill="#fff" transform="translate(90 120) scale(.6)"/>`),
+  rings:   () => svg(shadow(100,154,64) + `<path d="M42 122L158 122L150 150L50 150Z" fill="${C.red}"/>` + [[68,108],[104,96],[134,112],[90,122]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="21" fill="none" stroke="#D9963A" stroke-width="13"/><circle cx="${x}" cy="${y}" r="21" fill="none" stroke="#F1BE68" stroke-width="4" opacity=".7" stroke-dasharray="6 7"/>`).join('')),
+  nuggets: () => svg(shadow(100,154,58) + `<path d="M50 108L150 108L142 152L58 152Z" fill="${C.red}"/><path d="M50 108Q100 124 150 108L150 116Q100 132 50 116Z" fill="${C.redDk}"/>` + [[72,96,-10],[100,88,6],[128,98,14],[86,106,-4],[116,108,8]].map(([x,y,a])=>`<path d="M${x-16} ${y}q-2 -12 12 -13q14 -2 19 6q5 9 -3 15q-10 6 -20 3q-7 -3 -8 -11z" fill="#D9932F" transform="rotate(${a} ${x} ${y})"/><circle cx="${x-4}" cy="${y-3}" r="1.6" fill="#B26B1B"/><circle cx="${x+5}" cy="${y+2}" r="1.4" fill="#B26B1B"/>`).join('') + `<path d="${FLAME}" fill="#fff" transform="translate(90 124) scale(.55)"/>`),
+  cola:    () => can('#B5121B'),
+  zero:    () => can('#1B1B1B', '#E2231A'),
+  guarana: () => can('#1F8A3B', '#FFD34A'),
+  laranja: () => can('#F08A1C', '#fff'),
+  suco:    () => svg(cupG('#FFA62B', `<circle cx="72" cy="48" r="14" fill="#FFB84A" stroke="#F08A1C" stroke-width="3"/><path d="M72 36v24M60 48h24M63 39l18 18M81 39l-18 18" stroke="#F08A1C" stroke-width="1.2"/>`)),
+  agua:    () => svg(shadow(100,154,26) + `<rect x="88" y="22" width="24" height="14" rx="4" fill="#2C7BD6"/><path d="M84 40h32l6 14v92a6 6 0 0 1-6 6H84a6 6 0 0 1-6-6V54z" fill="#D7ECFB" stroke="#A9D2F2" stroke-width="2"/><rect x="78" y="82" width="44" height="30" fill="#2C7BD6"/><path d="M90 92q10 -8 20 0" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>`),
+  cha:     () => svg(cupG('#C8752B', `<rect x="82" y="78" width="16" height="16" rx="3" fill="#fff" opacity=".55" transform="rotate(12 90 86)"/><rect x="104" y="92" width="14" height="14" rx="3" fill="#fff" opacity=".5" transform="rotate(-10 111 99)"/><circle cx="128" cy="50" r="12" fill="#F2E35A" stroke="#C9B820" stroke-width="3"/>`)),
+  shakeChoc: () => svg(shakeG('#6B3A22')),
+  shakeMor:  () => svg(shakeG('#F08AA4')),
+  shakeBau:  () => svg(shakeG('#F6E2B4')),
+  shakeOvo:  () => svg(shakeG('#A9774A')),
+  brownie: () => svg(shadow(100,154,70) + `<ellipse cx="100" cy="140" rx="74" ry="14" fill="#fff" stroke="#E6DED6" stroke-width="2"/><path d="M50 96L136 88L156 112L68 124Z" fill="#5E3824"/><path d="M68 124L156 112L156 134L68 146Z" fill="#46281A"/><path d="M50 96L68 124L68 146L50 120Z" fill="#3A2014"/><circle cx="104" cy="84" r="22" fill="#FFF3DE"/><path d="M86 80q8 10 18 2t18 4q-2 12 -6 14q-4 -6 -8 0q-4 8 -8 0q-4 -6 -8 2q-4 -10 -6 -22z" fill="#3A1D10"/><circle cx="110" cy="62" r="6" fill="${C.red}"/>`),
+  cone:    () => svg(shadow(100,156,26) + `<path d="M78 82L122 82L100 154Z" fill="#E2A75A"/><path d="M82 92L118 92M86 104L114 104M90 116L110 116M94 128L106 128M84 84L108 140M96 84L112 120M116 84L94 140M104 84L88 120" stroke="#C0823A" stroke-width="1.6"/>` + [[100,74,28,12],[100,60,22,11],[100,48,16,9],[100,38,9,7]].map(([x,y,rx,ry])=>`<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#FFF7E8" stroke="#EADBC2" stroke-width="1.5"/>`).join('')),
+  combo:   (b='duplo') => { const bg = burgerG({duplo:['patty','cheese','onion','patty','cheese'], smash:['patty','cheese','sauce'], kids:['patty','cheese']}[b]).g;
+             return svg(`<g transform="translate(-14 28) scale(.6)">${friesG('M')}</g><g transform="translate(104 26) scale(.6)">${canG(b==='kids' ? '#F08A1C' : '#B5121B')}</g><g transform="translate(30 34) scale(.72)">${bg}</g>`, '0 0 200 166'); },
+  comboSmash: () => ART.combo('smash'),
+  comboKids:  () => ART.combo('kids'),
+  star:    () => svg(`<path d="M100 26l20 42 46 6-34 32 9 46-41-23-41 23 9-46-34-32 46-6z" fill="${C.cheese}"/>`)
+};
+
+/* ================= Cardápio ================= */
+const CATS = [
+  { id:'destaques', name:'Destaques', art:'star' },
+  { id:'burgers', name:'Burgers', art:'duplo' },
+  { id:'combos', name:'Combos', art:'combo' },
+  { id:'acomp', name:'Porções', art:'friesM' },
+  { id:'bebidas', name:'Bebidas', art:'cola' },
+  { id:'sobremesas', name:'Sobremesas', art:'shakeMor' }
+];
+const DRINK_OPTS = [['cola','Refrigerante cola',0],['zero','Cola zero',0],['guarana','Guaraná',0],['laranja','Laranja',0],['suco','Suco natural de laranja',3],['agua','Água mineral',0]];
+const G = {
+  ponto:   { id:'ponto', title:'Ponto da carne', type:'single', required:true, def:'ao', options:[['ao','Ao ponto',0],['bem','Bem passado',0],['mal','Mal passado',0]] },
+  extras:  { id:'extras', title:'Turbine seu lanche', hint:'Opcional · até 5 de cada', type:'qty', max:5, options:[['bacon','Bacon crocante',4],['cheddar','Cheddar extra',3],['ovo','Ovo',3],['carne','Carne extra',9],['crispy','Cebola crispy',3]] },
+  retirar: { id:'retirar', title:'Quer tirar alguma coisa?', hint:'Toque para retirar', type:'remove', options:[['cebola','Cebola'],['picles','Picles'],['molho','Molho da casa'],['tomate','Tomate'],['alface','Alface']] },
+  combo:   { id:'combo', title:'Que tal virar combo?', type:'single', required:true, def:'nao', options:[['nao','Só o lanche',0],['sim','Combo: batata média + bebida',14.9]] },
+  comboBeb:{ id:'comboBeb', title:'Bebida do combo', type:'single', required:true, showIf:['combo','sim'], options:DRINK_OPTS },
+  bebida:  { id:'bebida', title:'Escolha a bebida', type:'single', required:true, options:DRINK_OPTS },
+  batata:  { id:'batata', title:'Batata do combo', type:'single', required:true, def:'m', options:[['m','Média',0],['g','Grande',4]] },
+  tam:     { id:'tam', title:'Tamanho', type:'single', required:true, def:'M', options:[['P','Pequena · 100 g',-4],['M','Média · 150 g',0],['G','Grande · 220 g',5]] },
+  molhos:  { id:'molhos', title:'Molhos', hint:'1 grátis, depois R$ 2,50 cada', type:'qty', max:4, free:1, options:[['casa','Molho da casa',2.5],['barbecue','Barbecue',2.5],['cheddar','Cheddar',2.5],['alho','Maionese de alho',2.5]] },
+  sabor:   { id:'sabor', title:'Sabor', type:'single', required:true, options:[['cola','Cola',0],['zero','Cola zero',0],['guarana','Guaraná',0],['laranja','Laranja',0]] },
+  shTam:   { id:'shTam', title:'Tamanho', type:'single', required:true, def:'300', options:[['300','300 ml',0],['500','500 ml',6]] },
+  shSabor: { id:'shSabor', title:'Sabor', type:'single', required:true, options:[['choc','Chocolate',0],['mor','Morango',0],['bau','Baunilha',0],['ovo','Ovomaltine',2]] }
+};
+const BURGER_G = ['ponto','extras','retirar','combo','comboBeb'];
+const PRODUCTS = [
+  { id:'duplo', cat:'burgers', name:'Brasa Duplo', desc:'Dois burgers de 150 g, cheddar duplo, cebola caramelizada e molho da casa no pão brioche.', price:38.9, art:'duplo', badge:'Mais pedido', groups:BURGER_G },
+  { id:'smash', cat:'burgers', name:'Smash Clássico', desc:'Smash de 90 g, cheddar, picles e molho da casa.', price:24.9, art:'smash', groups:BURGER_G },
+  { id:'smashb', cat:'burgers', name:'Smash Bacon', desc:'Dois smash de 90 g, cheddar e bacon crocante.', price:31.9, art:'smashb', groups:BURGER_G },
+  { id:'melt', cat:'burgers', name:'Cheddar Melt', desc:'Burger de 150 g, cheddar cremoso em dobro e cebola crispy.', price:34.9, art:'melt', groups:BURGER_G },
+  { id:'salada', cat:'burgers', name:'Brasa Salada', desc:'Burger de 150 g, queijo prato, alface, tomate e maionese verde.', price:32.9, art:'salad', groups:BURGER_G },
+  { id:'chicken', cat:'burgers', name:'Chicken Crispy', desc:'Sobrecoxa empanada crocante, alface e maionese de ervas.', price:28.9, art:'chicken', groups:['extras','retirar','combo','comboBeb'] },
+  { id:'veggie', cat:'burgers', name:'Veggie Brasa', desc:'Burger de grão-de-bico e cogumelos, tomate e alface.', price:30.9, art:'veggie', badge:'Novo', groups:['extras','retirar','combo','comboBeb'] },
+  { id:'cduplo', cat:'combos', name:'Combo Brasa Duplo', desc:'Brasa Duplo + batata + bebida em lata.', price:49.9, art:'combo', badge:'Promo', groups:['ponto','batata','bebida','retirar'] },
+  { id:'csmash', cat:'combos', name:'Combo Smash', desc:'Smash Clássico + batata + bebida em lata.', price:36.9, art:'comboSmash', groups:['ponto','batata','bebida','retirar'] },
+  { id:'ckids', cat:'combos', name:'Combo Kids', desc:'Mini burger com queijo, batata pequena, suco e um brinde.', price:29.9, art:'comboKids', groups:['retirar'] },
+  { id:'fritas', cat:'acomp', name:'Batata Frita', desc:'Batata frita crocante com sal da casa.', price:13.9, art:'friesM', groups:['tam','molhos'] },
+  { id:'loaded', cat:'acomp', name:'Batata Cheddar & Bacon', desc:'Batata média coberta com cheddar cremoso e bacon.', price:22.9, art:'loaded', badge:'Mais pedido', groups:[] },
+  { id:'rings', cat:'acomp', name:'Onion Rings', desc:'Anéis de cebola empanados, 10 unidades.', price:18.9, art:'rings', groups:['molhos'] },
+  { id:'nuggets', cat:'acomp', name:'Nuggets', desc:'8 nuggets de frango crocantes.', price:16.9, art:'nuggets', groups:['molhos'] },
+  { id:'refri', cat:'bebidas', name:'Refrigerante lata', desc:'350 ml, bem gelado.', price:7, art:'cola', groups:['sabor'] },
+  { id:'suco', cat:'bebidas', name:'Suco de laranja', desc:'Natural, 400 ml.', price:10.9, art:'suco', groups:[] },
+  { id:'cha', cat:'bebidas', name:'Chá gelado de limão', desc:'Feito na casa, 400 ml.', price:8.9, art:'cha', groups:[] },
+  { id:'agua', cat:'bebidas', name:'Água mineral', desc:'500 ml, com ou sem gás.', price:5, art:'agua', groups:[] },
+  { id:'shake', cat:'sobremesas', name:'Milk-shake', desc:'Batido na hora com sorvete cremoso e chantilly.', price:18.9, art:'shakeMor', badge:'Mais pedido', groups:['shTam','shSabor'] },
+  { id:'brownie', cat:'sobremesas', name:'Brownie com sorvete', desc:'Brownie quentinho, sorvete de creme e calda de chocolate.', price:19.9, art:'brownie', groups:[] },
+  { id:'casquinha', cat:'sobremesas', name:'Casquinha', desc:'Sorvete de baunilha na casquinha crocante.', price:6.9, art:'cone', groups:[] }
+];
+const PR = Object.fromEntries(PRODUCTS.map(p => [p.id, p]));
+const FEATURED = ['duplo','loaded','smashb','shake','chicken','cduplo'];
+
+/* ================= Utilidades ================= */
+const brl = n => n.toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const I = {
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', back:'<path d="M15 18l-6-6 6-6"/>', x:'<path d="M18 6L6 18M6 6l12 12"/>', plus:'<path d="M12 5v14M5 12h14"/>', minus:'<path d="M5 12h14"/>',
+  bag:'<path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>', restart:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/>', check:'<path d="M5 12.5l4.5 4.5L19 7"/>', chev:'<path d="M9 6l6 6-6 6"/>',
+  wheel:'<circle cx="10" cy="4" r="1.6"/><path d="M10 7v6h5l2 5"/><path d="M14.5 18.5A5.5 5.5 0 1 1 8 10.4"/>', back2:'<path d="M9 14l-5-5 5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>', down:'<path d="M12 4v16M6 14l6 6 6-6"/>'
+};
+const ic = (n, cls='ico') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+const logoMark = (fill='#E2231A', w=40) => `<svg viewBox="0 0 32 32" width="${w}" aria-hidden="true"><path d="${FLAME}" fill="${fill}"/><path d="M16 14.5c1.3 2.2 3.4 3.3 3.4 5.9a3.4 3.4 0 0 1-6.8 0c0-1.6.8-2.6 1.6-3.2.1 1 .6 1.6 1.3 1.8-.2-1.8-.4-2.9.5-4.5z" fill="#FFC531"/></svg>`;
+
+/* ================= Estado ================= */
+const S = {
+  view:'attract', dine:null, cat:'destaques', cart:[], upsold:false, name:'', cpf:'', pay:null, payState:null,
+  orderNo:42, declineNext:false, off:false,
+  board:{ prep:[[40,'LUCAS'],[41,'ANA']], ready:[[38,'BRUNO'],[39,'CAMILA']] },
+  todayOrders:86, todayTotal:86*43.7, lastOrder:null
+};
+let SHEET = null;    // { pid, sel, qty }
+let LAYER = null;    // 'sheet' | 'upsell' | 'idle' | 'cpf'
+let timers = [];
+let lastTouch = Date.now();
+const $ = id => document.getElementById(id);
+
+function clearTimers(){ timers.forEach(t => { clearTimeout(t); clearInterval(t); }); timers = []; }
+const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+const every = (fn, ms) => { const t = setInterval(fn, ms); timers.push(t); return t; };
+
+/* ================= Regras de preço ================= */
+const isVisible = (g, sel) => !g.showIf || sel[g.showIf[0]] === g.showIf[1];
+function newSel(p){
+  const sel = {};
+  p.groups.forEach(gid => { const g = G[gid]; if (g.type === 'single') sel[gid] = g.def || null; if (g.type === 'qty') sel[gid] = {}; if (g.type === 'remove') sel[gid] = []; });
+  return sel;
+}
+function unitPrice(p, sel){
+  let t = p.price;
+  p.groups.forEach(gid => {
+    const g = G[gid]; if (!isVisible(g, sel)) return;
+    if (g.type === 'single' && sel[gid]){ const o = g.options.find(o => o[0] === sel[gid]); t += o ? o[2] : 0; }
+    if (g.type === 'qty'){ let n = 0; g.options.forEach(o => { const q = sel[gid][o[0]] || 0; for (let i=0;i<q;i++){ n++; if (!(g.free && n <= g.free)) t += o[2]; } }); }
+  });
+  return Math.round(t * 100) / 100;
+}
+function missing(p, sel){ return p.groups.map(gid => G[gid]).find(g => g.type === 'single' && g.required && isVisible(g, sel) && !sel[g.id]); }
+function describe(p, sel){
+  const out = [];
+  p.groups.forEach(gid => {
+    const g = G[gid]; if (!isVisible(g, sel)) return;
+    if (g.type === 'single' && sel[gid]){ const o = g.options.find(o => o[0] === sel[gid]); if (gid === 'combo') { if (sel[gid] === 'sim') out.push('Combo com batata média'); } else out.push(o[1].split(' · ')[0]); }
+    if (g.type === 'qty') g.options.forEach(o => { const q = sel[gid][o[0]]; if (q) out.push(`${q > 1 ? q+'× ' : '+ '}${o[1]}`); });
+    if (g.type === 'remove') sel[gid].forEach(r => out.push('Sem ' + G[gid].options.find(o => o[0] === r)[1].toLowerCase()));
+  });
+  return out.join(' · ');
+}
+function artFor(p, sel){
+  if (p.id === 'refri' && sel && sel.sabor) return ART[sel.sabor]();
+  if (p.id === 'fritas' && sel && sel.tam) return ART['fries'+sel.tam]();
+  if (p.id === 'shake' && sel && sel.shSabor) return ART[{choc:'shakeChoc', mor:'shakeMor', bau:'shakeBau', ovo:'shakeOvo'}[sel.shSabor]]();
+  if (sel && sel.combo === 'sim') return ART.combo(p.id === 'smash' ? 'smash' : 'duplo');
+  return ART[p.art]();
+}
+const cartCount = () => S.cart.reduce((s,i) => s + i.qty, 0);
+const cartTotal = () => Math.round(S.cart.reduce((s,i) => s + i.qty * i.unit, 0) * 100) / 100;
+
+/* ================= Telas ================= */
+function vAttract(){
+  return `<div class="view v-attract" data-act="start">
+    <div class="eyebrow">Autoatendimento · <b>Brasa Burger &amp; Co.</b></div>
+    <div class="logo">${logoMark('#E2231A', 80)}<div class="word">Brasa</div><div class="word-sub">burger &amp; co.</div></div>
+    <div class="hero"><div class="float">${ART.duplo()}</div><div class="tag">Combo<b>49,90</b>Brasa Duplo</div></div>
+    <div class="torn">Toque para iniciar o seu pedido ${'<svg viewBox="0 0 24 24"><path d="M5 6l6 6-6 6M12 6l6 6-6 6"/></svg>'}</div>
+    <div class="attract-foot"><span>Pague com cartão ou Pix</span><button class="round" data-act="a11y" aria-label="Modo acessível">${'<svg viewBox="0 0 24 24">'+I.wheel+'</svg>'}</button></div>
+  </div>`;
+}
+function vDine(){
+  const tray = svg(`<ellipse cx="100" cy="132" rx="84" ry="16" fill="#E8E0D9"/><rect x="24" y="104" width="152" height="26" rx="10" fill="${C.red}"/><g transform="translate(26 12) scale(.5)">${burgerG(['patty','cheese','lettuce']).g}</g><g transform="translate(92 28) scale(.48)">${friesG('M')}</g><g transform="translate(118 18) scale(.46)">${canG('#B5121B')}</g>`);
+  const bag = svg(`<ellipse cx="100" cy="150" rx="60" ry="9" fill="#000" opacity=".1"/><path d="M50 52h100l8 98H42z" fill="#C88A4E"/><path d="M50 52h100l2 18H48z" fill="#B57638"/><path d="M76 52v-10a24 24 0 0 1 48 0v10" stroke="#8C5A2A" stroke-width="7" fill="none" stroke-linecap="round"/><path d="${FLAME}" fill="${C.red}" transform="translate(76 76) scale(1.5)"/>`);
+  return `<div class="view v-dine">
+    <div class="mini-brand">${logoMark('#E2231A',32)}<div>Brasa<small>burger &amp; co.</small></div></div>
+    <div><h1 class="k-title">Onde você vai comer hoje?</h1><p class="k-sub">Escolha para separarmos a embalagem certa.</p></div>
+    <div class="dine-opts">
+      <button class="dine-opt" data-act="dine" data-d="aqui">${tray}Comer aqui<span>Servido na bandeja</span></button>
+      <button class="dine-opt" data-act="dine" data-d="levar">${bag}Para levar<span>Embalado para viagem</span></button>
+    </div>
+    <div class="back-row"><button class="k-btn line" data-act="reset">${ic('back')}Voltar ao início</button></div>
+  </div>`;
+}
+function productCard(p){
+  const off = S.off && p.id === 'melt';
+  return `<button class="card ${off?'off':''}" data-act="open" data-id="${p.id}" aria-label="${esc(p.name)}, ${brl(p.price)}${off?', esgotado':''}">
+    ${p.badge && !off ? `<span class="badge ${p.badge==='Novo'?'new':''}">${esc(p.badge)}</span>` : ''}${off ? '<span class="badge new">Esgotado</span>' : ''}
+    <span class="art">${ART[p.art]()}</span><span class="nm">${esc(p.name)}</span><span class="price">${off ? 'Volta logo' : brl(p.price)}</span></button>`;
+}
+function vMenu(){
+  const n = cartCount();
+  let list = '';
+  if (S.cat === 'destaques'){
+    list = `<button class="promo" data-act="open" data-id="cduplo"><span class="t"><small>Combo do dia</small><b>Brasa Duplo</b><span>Burger duplo + batata + bebida</span><span class="p">${brl(49.9)}</span></span>${ART.combo()}</button>
+      <h2 class="sec-title">Os mais pedidos <small>escolha da galera</small></h2><div class="grid">${FEATURED.map(id => productCard(PR[id])).join('')}</div>`;
+  } else {
+    const c = CATS.find(c => c.id === S.cat);
+    list = `<h2 class="sec-title">${c.name}</h2><div class="grid">${PRODUCTS.filter(p => p.cat === S.cat).map(productCard).join('')}</div>`;
+  }
+  return `<div class="view v-menu">
+    <header class="m-head">
+      <div class="hello"><b>Olá! Bateu a fome?</b><span>${S.dine === 'levar' ? 'Pedido para levar' : 'Pedido para comer aqui'} · <button class="link-btn" data-act="go" data-v="dine" style="padding:0">trocar</button></span></div>
+      <div class="tools"><button class="chip-btn" data-act="a11y" aria-label="Modo acessível">${'<svg viewBox="0 0 24 24">'+I.wheel+'</svg>'}</button><button class="chip-btn" data-act="ask-reset">${'<svg viewBox="0 0 24 24">'+I.restart+'</svg>'}Recomeçar</button></div>
+    </header>
+    <nav class="cats" aria-label="Categorias">${CATS.map(c => `<button class="cat" data-act="cat" data-c="${c.id}" aria-pressed="${S.cat===c.id}">${ART[c.art]()}<span>${c.name}</span></button>`).join('')}</nav>
+    <div class="list" id="list">${list}</div>
+    <div class="cartbar ${n ? '' : 'empty'}" id="cartbar">
+      <span class="bag">${'<svg viewBox="0 0 24 24">'+I.bag+'</svg>'}${n ? `<i>${n}</i>` : ''}</span>
+      <span class="sum"><span>${n ? `Seu pedido · ${n} ${n===1?'item':'itens'}` : 'Seu pedido está vazio'}</span><b>${brl(cartTotal())}</b></span>
+      <button class="k-btn" data-act="checkout" ${n ? '' : 'disabled'}>Ver pedido ${ic('arrow')}</button>
+    </div>
+  </div>`;
+}
+const stepper = (act, id, val, min, max, extra='') => `<span class="stepper"><button data-act="${act}" data-id="${id}" data-d="-1" ${extra} ${val<=min?'disabled':''} aria-label="Diminuir">${'<svg viewBox="0 0 24 24">'+I.minus+'</svg>'}</button><b>${val}</b><button data-act="${act}" data-id="${id}" data-d="1" ${extra} ${val>=max?'disabled':''} aria-label="Aumentar">${'<svg viewBox="0 0 24 24">'+I.plus+'</svg>'}</button></span>`;
+function stepsBar(i){ return `<span class="steps" aria-label="Etapa ${i} de 3">${[1,2,3].map(n => `<i class="${n<=i?'on':''}"></i>`).join('')}</span>`; }
+function vCart(){
+  const t = cartTotal();
+  return `<div class="view v-step">
+    <div class="step-head"><button class="back" data-act="go" data-v="menu" aria-label="Voltar ao cardápio">${'<svg viewBox="0 0 24 24">'+I.back+'</svg>'}</button><div><h1 class="k-title" style="font-size:calc(var(--u)*7.4)">Seu pedido</h1></div>${stepsBar(1)}</div>
+    <div class="step-body">
+      <div class="items">${S.cart.map((it,i) => { const p = PR[it.pid];
+        return `<div class="item"><span class="art">${artFor(p, it.sel)}</span><div class="t"><b>${esc(p.name)}</b>${it.desc ? `<p>${esc(it.desc)}</p>` : ''}
+          <div class="bot">${stepper('qty', i, it.qty, 1, 20)}<span class="price">${brl(it.unit*it.qty)}</span></div>
+          <button class="trash" data-act="del" data-id="${i}">${'<svg viewBox="0 0 24 24">'+I.trash+'</svg>'}Remover</button></div></div>`; }).join('')}</div>
+      <div class="lines"><div><span>${S.dine === 'levar' ? 'Para levar' : 'Comer aqui'}</span><span>${cartCount()} ${cartCount()===1?'item':'itens'}</span></div></div>
+    </div>
+    <div class="step-foot">
+      <div class="total-row"><span>Total</span><b>${brl(t)}</b></div>
+      <div class="row"><button class="k-btn line" data-act="go" data-v="menu">${ic('plus')}Mais itens</button><button class="k-btn red" data-act="go" data-v="name" ${S.cart.length?'':'disabled'}>Continuar ${ic('arrow')}</button></div>
+    </div>
+  </div>`;
+}
+const KEYS = ['QWERTYUIOP','ASDFGHJKL','ZXCVBNM'];
+function vName(){
+  return `<div class="view v-step">
+    <div class="step-head"><button class="back" data-act="go" data-v="cart" aria-label="Voltar">${'<svg viewBox="0 0 24 24">'+I.back+'</svg>'}</button>${stepsBar(2)}</div>
+    <div class="step-body">
+      <h1 class="k-title">Como podemos te chamar?</h1>
+      <p class="k-sub">Seu nome aparece no painel quando o pedido ficar pronto.</p>
+      <div class="namebox ${S.name?'':'ph'}" aria-live="polite">${S.name ? esc(S.name) + '<i class="caret"></i>' : 'Seu nome'}</div>
+      <div class="kbd">${KEYS.map((r,i) => `<div class="r">${[...r].map(k => `<button data-act="key" data-k="${k}">${k}</button>`).join('')}${i===2?`<button class="act" data-act="key" data-k="BK" aria-label="Apagar">${'<svg viewBox="0 0 24 24"><path d="M21 5H9l-6 7 6 7h12z"/><path d="M17 9l-6 6M11 9l6 6"/></svg>'}</button>`:''}</div>`).join('')}
+        <div class="r"><button class="wide" data-act="key" data-k=" ">Espaço</button></div></div>
+    </div>
+    <div class="step-foot"><div class="row"><button class="k-btn line" data-act="go" data-v="pay">Pular</button><button class="k-btn red" data-act="go" data-v="pay" ${S.name.trim()?'':'disabled'}>Continuar ${ic('arrow')}</button></div></div>
+  </div>`;
+}
+const PAY_ICON = {
+  credito: svg(`<rect x="22" y="40" width="156" height="98" rx="14" fill="#1B1513"/><rect x="22" y="62" width="156" height="16" fill="#3A302C"/><rect x="38" y="94" width="30" height="22" rx="4" fill="#FFC531"/><rect x="104" y="108" width="58" height="8" rx="4" fill="#6E6560"/>`, '0 20 200 140'),
+  debito:  svg(`<rect x="22" y="40" width="156" height="98" rx="14" fill="${C.red}"/><rect x="22" y="62" width="156" height="16" fill="${C.redDk}"/><rect x="38" y="94" width="30" height="22" rx="4" fill="#FFC531"/><rect x="104" y="108" width="58" height="8" rx="4" fill="#fff" opacity=".6"/>`, '0 20 200 140'),
+  pix:     svg(`<g transform="translate(100 90) rotate(45)"><rect x="-44" y="-44" width="38" height="38" rx="9" fill="#32BCAD"/><rect x="6" y="-44" width="38" height="38" rx="9" fill="#32BCAD"/><rect x="-44" y="6" width="38" height="38" rx="9" fill="#32BCAD"/><rect x="6" y="6" width="38" height="38" rx="9" fill="#32BCAD"/></g>`, '0 20 200 140'),
+  vale:    svg(`<rect x="30" y="34" width="140" height="104" rx="14" fill="#1E9A55"/><path d="M58 70h84M58 92h60" stroke="#fff" stroke-width="10" stroke-linecap="round"/><circle cx="142" cy="112" r="14" fill="#FFC531"/>`, '0 20 200 140'),
+  caixa:   svg(`<rect x="40" y="70" width="120" height="70" rx="10" fill="#1B1513"/><rect x="58" y="40" width="84" height="38" rx="6" fill="#6E6560"/><rect x="66" y="48" width="68" height="14" rx="3" fill="#7CF0A8"/><rect x="56" y="92" width="88" height="10" rx="5" fill="#3A302C"/>`, '0 20 200 140')
+};
+function vPay(){
+  return `<div class="view v-step">
+    <div class="step-head"><button class="back" data-act="go" data-v="name" aria-label="Voltar">${'<svg viewBox="0 0 24 24">'+I.back+'</svg>'}</button>${stepsBar(3)}</div>
+    <div class="step-body">
+      <h1 class="k-title">Como você quer pagar?</h1>
+      <p class="k-sub">Total do pedido: <b class="price" style="color:var(--k-ink)">${brl(cartTotal())}</b></p>
+      <div class="pays">
+        <button class="pay" data-act="pay" data-p="credito">${PAY_ICON.credito}Crédito<small>Aproximação ou chip</small></button>
+        <button class="pay" data-act="pay" data-p="debito">${PAY_ICON.debito}Débito<small>Aproximação ou chip</small></button>
+        <button class="pay" data-act="pay" data-p="pix">${PAY_ICON.pix}Pix<small>QR Code na tela</small></button>
+        <button class="pay" data-act="pay" data-p="vale">${PAY_ICON.vale}Vale-refeição<small>Na maquininha</small></button>
+        <button class="pay wide" data-act="pay" data-p="caixa">${PAY_ICON.caixa}<div>Pagar no caixa<small>Dinheiro ou outra forma</small></div></button>
+      </div>
+      <button class="cpf" data-act="cpf">${S.cpf ? `<span>CPF na nota</span><b>${esc(S.cpf)}</b>` : `<span>Quer CPF na nota?</span><b>Adicionar</b>`}</button>
+    </div>
+    <div class="step-foot"><div class="total-row"><span>Total</span><b>${brl(cartTotal())}</b></div></div>
+  </div>`;
+}
+function qrSvg(seed){
+  const N = 29; let a = seed;
+  const rnd = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  const finder = (x,y) => (x>=0 && x<7 && y>=0 && y<7);
+  const inF = (x,y) => finder(x,y) || finder(x-(N-7),y) || finder(x,y-(N-7));
+  let d = '';
+  for (let y=0;y<N;y++) for (let x=0;x<N;x++){
+    if (inF(x,y)) continue;
+    const c = x > 11 && x < 17 && y > 11 && y < 17;
+    if (!c && rnd() < .5) d += `M${x} ${y}h1v1h-1z`;
+  }
+  const fp = (x,y) => `<rect x="${x+.5}" y="${y+.5}" width="6" height="6" fill="none" stroke="#111" stroke-width="1"/><rect x="${x+2}" y="${y+2}" width="3" height="3" fill="#111"/>`;
+  return `<svg viewBox="0 0 ${N} ${N}" shape-rendering="crispEdges" aria-label="QR Code Pix de demonstração" role="img"><path d="${d}" fill="#111"/>${fp(0,0)}${fp(N-7,0)}${fp(0,N-7)}</svg>`;
+}
+function vProcess(){
+  const t = brl(cartTotal());
+  if (S.pay === 'pix'){
+    if (S.payState === 'ok') return vOk();
+    return `<div class="view v-center">
+      <h1 class="k-title">Pague com Pix</h1>
+      <p class="k-sub" style="margin:0">Abra o app do seu banco, escolha <b>Pagar com Pix</b> e aponte para o código.</p>
+      <div class="amount">${t}</div>
+      <div class="qr">${qrSvg(S.orderNo*7919)}<span class="pix-logo">${PAY_ICON.pix}</span></div>
+      <div class="waiting"><i></i>Aguardando pagamento · <span class="timer" id="pix-t">04:59</span></div>
+      <div class="row" style="display:flex; gap:calc(var(--u)*3); width:100%; margin-top:calc(var(--u)*2)"><button class="k-btn line" style="flex:1" data-act="go" data-v="pay">Trocar forma</button><button class="k-btn dark" style="flex:1" data-act="pix-paid">Simular pagamento</button></div>
+      <p class="k-sub" style="font-size:calc(var(--u)*2.8)">Na demonstração, o pagamento confirma sozinho em alguns segundos.</p>
+    </div>`;
+  }
+  if (S.payState === 'wait') return `<div class="view v-center">
+      <h1 class="k-title">${S.pay==='credito'?'Crédito':S.pay==='debito'?'Débito':'Vale-refeição'}</h1>
+      <div class="amount">${t}</div>
+      <div class="cardanim">${svg(`<g class="cc"><rect x="40" y="20" width="120" height="76" rx="10" fill="${S.pay==='debito'?C.red:S.pay==='vale'?'#1E9A55':'#1B1513'}"/><rect x="56" y="44" width="22" height="16" rx="3" fill="#FFC531"/><path d="M128 40a14 14 0 0 1 0 20M134 34a22 22 0 0 1 0 32" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></g>`, '0 0 200 120')}</div>
+      <p class="k-sub" style="font-size:calc(var(--u)*4.2); color:var(--k-ink); font-weight:700; margin:0">Aproxime, insira ou passe o cartão na maquininha abaixo</p>
+      <div class="arrow-down">${'<svg viewBox="0 0 24 24">'+I.down+'</svg>'}</div>
+      <div class="row" style="display:flex; gap:calc(var(--u)*3); width:100%"><button class="k-btn line" style="flex:1" data-act="go" data-v="pay">Cancelar</button><button class="k-btn dark" style="flex:1" data-act="card-tap">Simular aproximação</button></div>
+    </div>`;
+  if (S.payState === 'proc') return `<div class="view v-center"><div class="spinner" role="status" aria-label="Processando"></div><h1 class="k-title">Processando…</h1><p class="k-sub">Não retire o cartão.</p></div>`;
+  if (S.payState === 'fail') return `<div class="view v-center">
+      <div class="check" style="background:var(--k-red)">${'<svg viewBox="0 0 24 24" style="stroke-dasharray:none; stroke-dashoffset:0; animation:none">'+I.x+'</svg>'}</div>
+      <h1 class="k-title">Pagamento não aprovado</h1>
+      <p class="k-sub">O banco recusou a transação. Você pode tentar de novo, escolher outra forma ou pagar no caixa.</p>
+      <div style="display:flex; flex-direction:column; gap:calc(var(--u)*2.4); width:100%; margin-top:calc(var(--u)*3)">
+        <button class="k-btn red" data-act="pay" data-p="${S.pay}">Tentar de novo</button>
+        <button class="k-btn" data-act="go" data-v="pay">Escolher outra forma</button>
+        <button class="k-btn line" data-act="pay" data-p="caixa">Pagar no caixa</button>
+      </div></div>`;
+  return vOk();
+}
+function vOk(){
+  const o = S.lastOrder;
+  const paid = o.pay !== 'caixa';
+  return `<div class="view v-done">
+    <div class="check">${'<svg viewBox="0 0 24 24">'+I.check+'</svg>'}</div>
+    <h1 class="k-title">${paid ? 'Pedido confirmado!' : 'Pedido enviado!'}</h1>
+    <div class="ticket"><small>Sua senha</small><div class="num">${String(o.no).padStart(3,'0')}</div>${o.name ? `<div class="who">${esc(o.name)}</div>` : ''}</div>
+    <p class="done-info">${paid ? `Pago com <b>${{credito:'cartão de crédito',debito:'cartão de débito',pix:'Pix',vale:'vale-refeição'}[o.pay]}</b>. Acompanhe a senha no painel. Tempo estimado: <b>12 minutos</b>.` : `Vá até o <b>caixa</b>, informe a senha <b>${String(o.no).padStart(3,'0')}</b> e pague. A cozinha começa assim que o pagamento for registrado.`}</p>
+    <p class="done-info" style="font-size:calc(var(--u)*3)">Retire seu comprovante abaixo da tela.</p>
+    <svg class="ring" viewBox="0 0 100 100" aria-label="Voltando ao início"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" id="ring-fg" cx="50" cy="50" r="42" stroke-dasharray="263.9" stroke-dashoffset="0"/><text x="50" y="62" text-anchor="middle" id="ring-n">15</text></svg>
+    <button class="k-btn" data-act="reset">Novo pedido</button>
+  </div>`;
+}
+
+/* ================= Camadas ================= */
+function sheetHtml(){
+  const p = PR[SHEET.pid], sel = SHEET.sel;
+  const miss = missing(p, sel);
+  const unit = unitPrice(p, sel);
+  const groups = p.groups.map(gid => {
+    const g = G[gid]; if (!isVisible(g, sel)) return '';
+    let body = '';
+    if (g.type === 'single') body = g.options.map(o => `<button class="opt" role="radio" aria-checked="${sel[gid]===o[0]}" data-act="opt" data-g="${gid}" data-o="${o[0]}"><span class="radio"></span><span class="l">${esc(o[1])}</span>${o[2] ? `<span class="pr">${o[2] > 0 ? '+ ' : '− '}${brl(Math.abs(o[2]))}</span>` : ''}</button>`).join('');
+    if (g.type === 'qty') body = g.options.map(o => { const q = sel[gid][o[0]] || 0; return `<div class="opt"><span class="l">${esc(o[1])}<small>+ ${brl(o[2])}</small></span>${stepper('ext', o[0], q, 0, g.max, `data-g="${gid}"`)}</div>`; }).join('');
+    if (g.type === 'remove') body = `<div class="chips">${g.options.map(o => { const on = sel[gid].includes(o[0]); return `<button class="rm" aria-pressed="${on}" data-act="rm" data-g="${gid}" data-o="${o[0]}">${on ? '<svg viewBox="0 0 24 24">'+I.x+'</svg>Sem ' + esc(o[1].toLowerCase()) : esc(o[1])}</button>`; }).join('')}</div>`;
+    const reqTag = g.required ? `<span class="req ${sel[gid]?'ok':''}">${sel[gid] ? 'Ok' : 'Obrigatório'}</span>` : '';
+    return `<section class="grp" id="grp-${gid}"><div class="grp-h"><div><b>${esc(g.title)}</b>${g.hint ? `<small>${esc(g.hint)}</small>` : ''}</div>${reqTag}</div>${body}</section>`;
+  }).join('');
+  return `<div class="scrim" data-act="close"></div>
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(p.name)}">
+      <div class="sheet-art">${artFor(p, sel)}<button class="x" data-act="close" aria-label="Fechar">${'<svg viewBox="0 0 24 24">'+I.x+'</svg>'}</button></div>
+      <div class="sheet-body" id="sheet-body"><h2 class="p-name">${esc(p.name)}</h2><p class="p-desc">${esc(p.desc)}</p><div class="p-price">${brl(p.price)}</div>${groups}</div>
+      <div class="sheet-foot">${stepper('sqty', 0, SHEET.qty, 1, 20)}<button class="k-btn red" data-act="add" ${miss?'':''}>${miss ? `Escolha: ${esc(miss.title.toLowerCase())}` : `Adicionar · ${brl(unit*SHEET.qty)}`}</button></div>
+    </div>`;
+}
+function upsellHtml(){
+  const hasDrink = S.cart.some(i => PR[i.pid].cat === 'bebidas' || i.sel.comboBeb || i.sel.bebida || i.pid === 'ckids');
+  const hasSweet = S.cart.some(i => PR[i.pid].cat === 'sobremesas');
+  const hasSide = S.cart.some(i => PR[i.pid].cat === 'acomp' || i.sel.combo === 'sim' || PR[i.pid].cat === 'combos');
+  let ids, title, sub;
+  if (!hasDrink){ ids = ['refri','suco','cha']; title = 'Vai uma bebida gelada?'; sub = 'Combina com o seu lanche.'; }
+  else if (!hasSide){ ids = ['loaded','rings','nuggets']; title = 'Que tal uma porção?'; sub = 'Para dividir ou não.'; }
+  else if (!hasSweet){ ids = ['casquinha','shake','brownie']; title = 'E uma sobremesa?'; sub = 'Para fechar com chave de ouro.'; }
+  else return null;
+  return `<div class="scrim"></div><div class="pop" role="dialog" aria-modal="true" aria-label="${title}">
+    <h2 class="k-title">${title}</h2><p class="k-sub">${sub}</p>
+    <div class="ups">${ids.map(id => { const p = PR[id]; return `<button class="card" data-act="ups" data-id="${id}"><span class="art">${ART[p.art]()}</span><span class="nm">${esc(p.name)}</span><span class="price">${brl(p.price)}</span><span class="add">+ Adicionar</span></button>`; }).join('')}</div>
+    <div class="actions"><button class="k-btn red" data-act="ups-done">Ver meu pedido ${ic('arrow')}</button><button class="k-btn line" data-act="ups-done">Não, obrigado</button></div></div>`;
+}
+function idleHtml(){
+  return `<div class="scrim"></div><div class="pop" role="alertdialog" aria-modal="true" aria-label="Ainda está aí?">
+    <h2 class="k-title">Ainda está aí?</h2><p class="k-sub">Por segurança, vamos limpar o pedido e voltar ao início.</p>
+    <svg class="ring" viewBox="0 0 100 100"><circle class="bg" cx="50" cy="50" r="42"/><circle class="fg" id="idle-fg" cx="50" cy="50" r="42" stroke-dasharray="263.9" stroke-dashoffset="0"/><text x="50" y="62" text-anchor="middle" id="idle-n">15</text></svg>
+    <div class="actions"><button class="k-btn red" data-act="idle-stay">Continuar meu pedido</button><button class="k-btn line" data-act="reset">Começar de novo</button></div></div>`;
+}
+function confirmResetHtml(){
+  return `<div class="scrim" data-act="close"></div><div class="pop" role="alertdialog" aria-modal="true" aria-label="Recomeçar">
+    <h2 class="k-title">Recomeçar o pedido?</h2><p class="k-sub">Os itens escolhidos serão removidos.</p>
+    <div class="actions" style="margin-top:calc(var(--u)*5)"><button class="k-btn red" data-act="reset">Sim, recomeçar</button><button class="k-btn line" data-act="close">Continuar pedindo</button></div></div>`;
+}
+let CPF_BUF = '';
+const fmtCpf = d => { const s = d.padEnd(11,'_'); return `${s.slice(0,3)}.${s.slice(3,6)}.${s.slice(6,9)}-${s.slice(9,11)}`; };
+function cpfHtml(){
+  return `<div class="scrim" data-act="close"></div><div class="pop" role="dialog" aria-modal="true" aria-label="CPF na nota">
+    <h2 class="k-title">CPF na nota</h2><div class="cpf-show">${fmtCpf(CPF_BUF)}</div>
+    <div class="pad">${[1,2,3,4,5,6,7,8,9].map(n => `<button data-act="cpfk" data-k="${n}">${n}</button>`).join('')}<button data-act="cpfk" data-k="C" aria-label="Limpar" style="font-size:calc(var(--u)*3.2)">Limpar</button><button data-act="cpfk" data-k="0">0</button><button data-act="cpfk" data-k="BK" aria-label="Apagar">${'<svg viewBox="0 0 24 24"><path d="M21 5H9l-6 7 6 7h12z"/><path d="M17 9l-6 6M11 9l6 6"/></svg>'}</button></div>
+    <div class="actions"><button class="k-btn red" data-act="cpf-ok" ${CPF_BUF.length===11?'':'disabled'}>Confirmar CPF</button><button class="k-btn line" data-act="cpf-no">Sem CPF</button></div></div>`;
+}
+
+/* ================= Render ================= */
+const VIEWS = { attract:vAttract, dine:vDine, menu:vMenu, cart:vCart, name:vName, pay:vPay, process:vProcess };
+function render(){
+  const listScroll = $('list') ? $('list').scrollTop : 0;
+  $('view').innerHTML = VIEWS[S.view]();
+  if (S.view === 'menu' && $('list') && S.keepScroll) $('list').scrollTop = listScroll;
+  S.keepScroll = false;
+  renderLayer();
+}
+function renderLayer(){
+  const sb = $('sheet-body'), y = sb ? sb.scrollTop : 0;
+  let h = '';
+  if (LAYER === 'sheet') h = sheetHtml();
+  if (LAYER === 'upsell') h = upsellHtml() || '';
+  if (LAYER === 'idle') h = idleHtml();
+  if (LAYER === 'reset') h = confirmResetHtml();
+  if (LAYER === 'cpf') h = cpfHtml();
+  $('layer').innerHTML = h ? `<div class="layer">${h}</div>` : '';
+  const nb = $('sheet-body'); if (nb && S.keepSheet) nb.scrollTop = y;
+  S.keepSheet = false;
+}
+function go(v){
+  if (S.view === 'process' && v !== 'process') { clearTimers(); $('reader').classList.remove('glow'); }
+  S.view = v; LAYER = null; render();
+}
+function ktoast(t){ $('ktoast').innerHTML = `<div class="k-toast">${'<svg viewBox="0 0 24 24">'+I.check+'</svg>'}${esc(t)}</div>`; }
+function bumpCart(){ const b = $('cartbar'); if (b){ b.classList.remove('bump'); void b.offsetWidth; b.classList.add('bump'); } }
+
+function resetAll(){
+  clearTimers();
+  Object.assign(S, { view:'attract', dine:null, cat:'destaques', cart:[], upsold:false, name:'', cpf:'', pay:null, payState:null });
+  SHEET = null; LAYER = null; CPF_BUF = '';
+  $('reader').classList.remove('glow');
+  render();
+}
+
+/* ================= Pagamento ================= */
+function startPay(kind){
+  clearTimers();
+  S.pay = kind; LAYER = null;
+  if (kind === 'caixa'){ finish(); return; }
+  S.view = 'process';
+  if (kind === 'pix'){
+    S.payState = 'wait'; render();
+    let left = 299;
+    every(() => { left--; const el = $('pix-t'); if (el) el.textContent = `${String(Math.floor(left/60)).padStart(2,'0')}:${String(left%60).padStart(2,'0')}`; }, 1000);
+    later(finish, 8000);
+    return;
+  }
+  S.payState = 'wait'; render();
+  $('reader').classList.add('glow');
+  later(cardTap, 6000);
+}
+function cardTap(){
+  clearTimers();
+  S.payState = 'proc'; render();
+  later(() => {
+    $('reader').classList.remove('glow');
+    if (S.declineNext){ S.declineNext = false; $('sim-decline').checked = false; S.payState = 'fail'; render(); }
+    else finish();
+  }, 1800);
+}
+function finish(){
+  clearTimers();
+  $('reader').classList.remove('glow');
+  const no = S.orderNo++;
+  const order = { no, name:S.name.trim(), pay:S.pay, total:cartTotal(), items:S.cart.map(i => ({...i})), dine:S.dine, cpf:S.cpf };
+  S.lastOrder = order; S.view = 'process'; S.payState = 'ok';
+  S.todayOrders++; S.todayTotal += order.total;
+  S.board.prep.push([no, (order.name || 'Cliente').toUpperCase().split(' ')[0]]);
+  S.board.fresh = no;
+  renderBoard(); renderStats();
+  render();
+  printReceipt(order);
+  if (order.pay !== 'caixa') setTimeout(() => moveReady(no), 20000);
+  let n = 15;
+  every(() => {
+    n--; const fg = $('ring-fg'), tx = $('ring-n');
+    if (fg) fg.style.strokeDashoffset = String(263.9 * (1 - n/15));
+    if (tx) tx.textContent = n;
+    if (n <= 0) resetAll();
+  }, 1000);
+}
+function moveReady(no){
+  const i = S.board.prep.findIndex(x => x[0] === no);
+  if (i < 0) return;
+  const [it] = S.board.prep.splice(i,1);
+  S.board.ready.push(it); S.board.ready = S.board.ready.slice(-4); S.board.freshReady = no;
+  renderBoard();
+}
+function printReceipt(o){
+  const r = $('receipt');
+  r.classList.remove('out');
+  const lines = o.items.map(i => `<div class="r"><span>${i.qty}x ${esc(PR[i.pid].name)}</span><span>${(i.unit*i.qty).toFixed(2).replace('.',',')}</span></div>`).join('');
+  r.innerHTML = `<div class="in"><div class="c"><b>BRASA BURGER &amp; CO.</b><br>Av. Paulista, 1000 · SP</div><hr><div class="c">SENHA</div><div class="big">${String(o.no).padStart(3,'0')}</div><div class="c">${o.name ? esc(o.name.toUpperCase()) + ' · ' : ''}${o.dine==='levar'?'PARA LEVAR':'COMER AQUI'}</div><hr>${lines}<hr><div class="r"><b>TOTAL</b><b>${o.total.toFixed(2).replace('.',',')}</b></div><div class="r"><span>${{credito:'CRÉDITO',debito:'DÉBITO',pix:'PIX',vale:'VALE-REF.',caixa:'PAGAR NO CAIXA'}[o.pay]}</span><span>${o.pay==='caixa'?'PENDENTE':'APROVADO'}</span></div>${o.cpf?`<div class="r"><span>CPF</span><span>${esc(o.cpf)}</span></div>`:''}<hr><div class="c">Documento de demonstração<br>sem valor fiscal</div></div>`;
+  requestAnimationFrame(() => requestAnimationFrame(() => r.classList.add('out')));
+}
+
+/* ================= Demo ================= */
+function renderBoard(){
+  const li = (arr, fresh) => arr.slice(-4).map(([n,name]) => `<li class="${n===fresh?'fresh':''}">${String(n).padStart(3,'0')}<span>${esc(name)}</span></li>`).join('');
+  $('board').innerHTML = `<div><h3>Em preparo</h3><ul>${li(S.board.prep, S.board.fresh)}</ul></div><div><h3 class="ready">Pronto</h3><ul>${li(S.board.ready, S.board.freshReady)}</ul></div>`;
+}
+function renderStats(){
+  $('stats').innerHTML = `<div><span>Pedidos</span><b>${S.todayOrders}</b></div><div><span>Ticket médio</span><b>${brl(S.todayTotal / S.todayOrders)}</b></div>`;
+}
+
+/* ================= Ações ================= */
+const A = {
+  start: () => go('dine'),
+  dine: t => { S.dine = t.dataset.d; go('menu'); },
+  go: t => {
+    const v = t.dataset.v;
+    if (v === 'pay' && S.view === 'name' && t.textContent.trim().startsWith('Pular')) S.name = '';
+    if (v === 'pay' && S.view === 'process') S.payState = null;
+    go(v);
+  },
+  cat: t => { S.cat = t.dataset.c; render(); const l = $('list'); if (l) l.scrollTop = 0; },
+  open: t => { const p = PR[t.dataset.id]; SHEET = { pid:p.id, sel:newSel(p), qty:1 }; LAYER = 'sheet'; renderLayer(); },
+  close: () => { LAYER = null; SHEET = null; renderLayer(); },
+  opt: t => { SHEET.sel[t.dataset.g] = t.dataset.o; S.keepSheet = true; renderLayer();
+    if (t.dataset.g === 'combo' && t.dataset.o === 'sim') setTimeout(() => { const el = $('grp-comboBeb'); if (el) el.scrollIntoView({behavior:'smooth', block:'center'}); }, 50); },
+  ext: t => { const g = t.dataset.g, id = t.dataset.id, m = SHEET.sel[g]; m[id] = Math.max(0, Math.min(G[g].max, (m[id]||0) + Number(t.dataset.d))); S.keepSheet = true; renderLayer(); },
+  rm: t => { const arr = SHEET.sel[t.dataset.g], o = t.dataset.o, i = arr.indexOf(o); i >= 0 ? arr.splice(i,1) : arr.push(o); S.keepSheet = true; renderLayer(); },
+  sqty: t => { SHEET.qty = Math.max(1, Math.min(20, SHEET.qty + Number(t.dataset.d))); S.keepSheet = true; renderLayer(); },
+  add: () => {
+    const p = PR[SHEET.pid], miss = missing(p, SHEET.sel);
+    if (miss){ const el = $('grp-' + miss.id); if (el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.animate([{transform:'translateX(0)'},{transform:'translateX(-8px)'},{transform:'translateX(8px)'},{transform:'translateX(0)'}], {duration:300}); } return; }
+    addToCart(p.id, SHEET.sel, SHEET.qty);
+    LAYER = null; SHEET = null; S.keepScroll = true; render(); bumpCart(); ktoast(`${p.name} no pedido`);
+  },
+  checkout: () => {
+    if (!S.cart.length) return;
+    if (!S.upsold){ S.upsold = true; if (upsellHtml()){ LAYER = 'upsell'; renderLayer(); return; } }
+    go('cart');
+  },
+  ups: t => { const p = PR[t.dataset.id]; const sel = newSel(p); if (p.id === 'refri') sel.sabor = 'cola'; if (p.id === 'shake') sel.shSabor = 'mor';
+    addToCart(p.id, sel, 1); t.setAttribute('aria-pressed','true'); t.querySelector('.add').textContent = '✓ Adicionado'; t.dataset.act = ''; },
+  'ups-done': () => go('cart'),
+  qty: t => { const it = S.cart[Number(t.dataset.id)]; it.qty = Math.max(1, Math.min(20, it.qty + Number(t.dataset.d))); render(); },
+  del: t => { S.cart.splice(Number(t.dataset.id), 1); if (!S.cart.length) go('menu'); else render(); },
+  key: t => { const k = t.dataset.k; if (k === 'BK') S.name = S.name.slice(0,-1); else if (S.name.length < 16) S.name = (S.name + k).replace(/^ /,'').replace(/  +/g,' '); render(); },
+  pay: t => startPay(t.dataset.p),
+  'card-tap': () => cardTap(),
+  'pix-paid': () => finish(),
+  cpf: () => { CPF_BUF = S.cpf.replace(/\D/g,''); LAYER = 'cpf'; renderLayer(); },
+  cpfk: t => { const k = t.dataset.k; if (k === 'BK') CPF_BUF = CPF_BUF.slice(0,-1); else if (k === 'C') CPF_BUF = ''; else if (CPF_BUF.length < 11) CPF_BUF += k; renderLayer(); },
+  'cpf-ok': () => { S.cpf = fmtCpf(CPF_BUF); LAYER = null; render(); },
+  'cpf-no': () => { S.cpf = ''; CPF_BUF = ''; LAYER = null; render(); },
+  'ask-reset': () => { if (!S.cart.length) { resetAll(); return; } LAYER = 'reset'; renderLayer(); },
+  reset: () => resetAll(),
+  a11y: () => setA11y(!$('screen').classList.contains('a11y')),
+  'idle-stay': () => { idleStop(); },
+  'idle-now': () => { if (S.view === 'attract'){ S.view = 'menu'; S.dine = S.dine || 'aqui'; render(); } idleStart(); },
+  orient: t => setOrient(t.dataset.o),
+  receipt: () => $('receipt').classList.remove('out')
+};
+function addToCart(pid, sel, qty){
+  const p = PR[pid], unit = unitPrice(p, sel), desc = describe(p, sel);
+  const key = pid + '|' + JSON.stringify(sel);
+  const ex = S.cart.find(i => i.key === key);
+  if (ex) ex.qty += qty; else S.cart.push({ key, pid, sel:JSON.parse(JSON.stringify(sel)), qty, unit, desc });
+}
+function setA11y(on){ $('screen').classList.toggle('a11y', on); $('sim-a11y').checked = on; }
+function setOrient(o){
+  $('device').dataset.orient = o;
+  document.querySelectorAll('[data-act="orient"]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.o === o)));
+}
+
+/* ================= Inatividade ================= */
+let idleTimer = null;
+function idleStart(){
+  LAYER = 'idle'; renderLayer();
+  let n = 15; clearInterval(idleTimer);
+  idleTimer = setInterval(() => {
+    n--; const fg = $('idle-fg'), tx = $('idle-n');
+    if (fg) fg.style.strokeDashoffset = String(263.9 * (1 - n/15));
+    if (tx) tx.textContent = n;
+    if (n <= 0){ clearInterval(idleTimer); resetAll(); }
+  }, 1000);
+}
+function idleStop(){ clearInterval(idleTimer); LAYER = null; lastTouch = Date.now(); renderLayer(); }
+setInterval(() => {
+  const busy = S.view === 'attract' || (S.view === 'process') || LAYER === 'idle';
+  if (!busy && Date.now() - lastTouch > 60000) idleStart();
+}, 1000);
+
+/* ================= Eventos ================= */
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-act]'); if (!t || !t.dataset.act) return;
+  const fn = A[t.dataset.act]; if (!fn) return;
+  e.stopPropagation(); fn(t, e);
+});
+$('screen').addEventListener('pointerdown', () => { lastTouch = Date.now(); });
+$('sim-decline').addEventListener('change', e => { S.declineNext = e.target.checked; });
+$('sim-a11y').addEventListener('change', e => setA11y(e.target.checked));
+$('sim-off').addEventListener('change', e => { S.off = e.target.checked; S.cart = S.cart.filter(i => !(S.off && i.pid === 'melt')); if (S.view === 'menu' || S.view === 'cart') { S.keepScroll = true; render(); } });
+
+renderBoard(); renderStats(); render();
+</script>
